@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.discount.DiscountDao">
+	<sql id="table">
+		tb_discount
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.discount.Discount" >
+	<id column="id" property="id" />   
+	<result column="discount_name" property="discountName" />
+	<result column="discount_amount" property="discountAmount" />
+	<result column="recharge_amount" property="rechargeAmount" />
+	<result column="img_url" property="imgUrl" />
+	<result column="is_effective" property="isEffective" />
+	<result column="recharge_id" property="rechargeId" />
+	<result column="update_time" property="updateTime" />
+	</resultMap>
+	
+	<select id="getDiscountInfo" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE recharge_amount = #{rechargeAmount,jdbcType=INTEGER} AND is_effective=1
+	</select>
+	
+	<update id="endDiscount" parameterType="com.hiveview.entity.discount.Discount">
+		UPDATE 
+		<include refid="table"/>
+		SET is_effective = 0
+		WHERE is_effective=1
+	</update>
+</mapper>

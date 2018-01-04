@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.award.AwardActivityDao">
+	<sql id="table">
+		t_award_activity
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.po.award.AwardActivity">
+		<id column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="type" property="type" />
+		<result column="sequence" property="sequence" />
+		<result column="begin_time" property="beginTime" />
+		<result column="end_time" property="endTime" />
+		<result column="logo_url" property="logoUrl" />
+		<result column="bg_url" property="bgUrl" />
+		<result column="info_bg_url" property="infoBgUrl" />
+		<result column="playing_bg_url" property="playingBgUrl" />
+		<result column="end_title" property="endTitle" />
+		<result column="end_text" property="endText" />
+		<result column="play_limit_day" property="playLimitDay" />
+		<result column="play_limit_total" property="playLimitTotal" />
+		<result column="play_prompt_day" property="playPromptDay" />
+		<result column="play_prompt_total" property="playPromptTotal" />
+		<result column="play_prompt_win" property="playPromptWin" />
+		<result column="play_prompt_lost" property="playPromptLost" />
+		<result column="phone_bind_type" property="phoneBindType" />
+		<result column="award_code_type" property="awardCodeType" />
+		<result column="award_win_ratio" property="awardWinRatio" />
+		<result column="award_win_limit" property="awardWinLimit" />
+		<result column="award_win_again" property="awardWinAgain" />
+		<result column="award_player_type" property="awardPlayerType" />
+		<result column="pay_begin_time" property="payBeginTime" />
+		<result column="pay_end_time" property="payEndTime" />
+		<result column="pay_sum" property="paySum" />
+		<result column="award_remark" property="awardRemark" />
+		<result column="activity_desc" property="activityDesc" />
+		<result column="show_flag" property="showFlag" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="id != null ">
+				and id = #{id,jdbcType=INTEGER}
+			</if>
+			<if test="title != null ">
+				and title = #{title,jdbcType=VARCHAR}
+			</if>
+			<if test="type != null ">
+				and type = #{type,jdbcType=INTEGER}
+			</if>
+			<if test="showFlag != null ">
+				and show_flag = #{showFlag,jdbcType=INTEGER}
+			</if>
+			<if test="limitEndDate != null ">
+				and #{limitEndDate} &lt;= end_time
+			</if>
+		</where>
+	</sql>
+
+	<select id="get" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="getList" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="getActivityHomePageList" resultType="com.hiveview.entity.vo.api.AwardActivityVo" >
+		SELECT id as activityId,
+		type,
+		title,
+		logo_url as logoUrl,
+		bg_url as bgUrl FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+	
+	<select id="getActivityHomeListOnline" resultType="com.hiveview.entity.vo.api.AwardActivityVo" >
+		SELECT id as activityId,
+		type,
+		title,
+		logo_url as logoUrl,
+		bg_url as bgUrl FROM
+		t_award_activity
+		WHERE
+			NOW() &lt;= end_time
+		AND show_flag = 1 
+		ORDER BY begin_time ASC
+	</select>
+	
+	<select id="getActivityHomeListOffline" resultType="com.hiveview.entity.vo.api.AwardActivityVo" >
+		SELECT id as activityId,
+		type,
+		title,
+		logo_url as logoUrl,
+		bg_url as bgUrl FROM
+		t_award_activity
+		where 
+			NOW() &gt; end_time
+		AND show_flag = 1
+		ORDER BY end_time DESC
+	</select>
+	
+	<select id="getActivityInfoList" resultType="com.hiveview.entity.vo.api.AwardActivityVo">
+		SELECT id as activityId,
+		type,
+		title FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+	
+	<select id="getActivityHomePage" resultType="com.hiveview.entity.vo.api.AwardActivityHomeVo">
+	SELECT
+	id as activityId,
+	title,
+	type,
+	playing_bg_url as playingBgUrl,
+	phone_bind_type as phoneBindType
+	FROM
+	<include refid="table" />
+	<where>
+		<if test="_parameter != null">
+			id = #{_parameter}
+		</if>
+	</where>
+	</select>
+	
+	<resultMap id="AwardGameInfoResultMap" type="com.hiveview.entity.vo.api.AwardGameInfoVo">
+		<result column="id" property="activityId" />
+		<result column="type" property="type" />
+		<result column="info_bg_url" property="infoBgUrl" />
+		<collection property="icons" javaType="List" ofType="Map">
+			<result column="deatailId" property="deatailId" />
+			<result column="award_icon_url" property="awardIconUrl" />
+		</collection>
+	</resultMap>
+	
+	<select id="getGameInfo" resultMap="AwardGameInfoResultMap">
+	SELECT
+	taa.id,
+	taa.type,
+	taa.info_bg_url,
+	tad.id as deatailId,
+	tad.award_icon_url
+	FROM
+	t_award_activity taa
+	LEFT JOIN t_award_detail tad on taa.id = tad.activity_id
+	<where>
+		<if test="_parameter != null">
+			taa.id = #{_parameter}
+		</if>
+	</where>
+	</select>
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.award.AwardActivityTypeDao">
+	<sql id="table">
+		t_award_activity_type
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.po.award.AwardActivityType">
+		<id column="id" property="id" />
+		<result column="type_code" property="typeCode" />
+		<result column="type_name" property="typeName" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="id != null ">
+				and id = #{id,jdbcType=INTEGER}
+			</if>
+			<if test="typeCode != null ">
+				and type_code = #{typeCode,jdbcType=INTEGER}
+			</if>
+			<if test="typeName != null ">
+				and type_name = #{typeName,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<select id="get" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="getList" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+</mapper>

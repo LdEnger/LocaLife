@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.award.AwardCodeDao">
+	<sql id="table">
+		t_award_code
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.po.award.AwardCode">
+		<id column="id" property="id" />
+		<id column="detail_id" property="detailId" />
+		<id column="award_code" property="awardCode" />
+		<id column="accept_flag" property="acceptFlag" />
+		<id column="award_code_type" property="awardCodeType" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="id != null ">
+				and id = #{id,jdbcType=INTEGER}
+			</if>
+			<if test="awardCode != null ">
+				and award_code = #{awardCode,jdbcType=VARCHAR}
+			</if>
+			<if test="detailId != null ">
+				and detail_id = #{detailId,jdbcType=INTEGER}
+			</if>
+			<if test="acceptFlag != null ">
+				and accept_flag = #{acceptFlag,jdbcType=INTEGER}
+			</if>
+		</where>
+	</sql>
+	
+	<select id="count" resultType="Integer">
+		SELECT count(*) FROM 
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="getList" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="get" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<update id="update">
+		UPDATE
+		<include refid="table" />
+		<include refid="setAwardCode" />
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<sql id="setAwardCode">
+		<set>
+			<if test="awardCode != null">
+				award_code = #{awardCode,jdbcType=VARCHAR},
+			</if>
+			<if test="acceptFlag != null">
+				accept_flag = #{acceptFlag,jdbcType=INTEGER},
+			</if>
+			<if test="detailId != null">
+				detail_id = #{detailId,jdbcType=INTEGER},
+			</if>
+		</set>
+	</sql>
+	
+	<select id="getUnUsedCode" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+		LIMIT 1
+	</select>
+</mapper>

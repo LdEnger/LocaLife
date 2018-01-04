@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.localLife.LogoDao">
+	<sql id="table">
+		ll_recommend  llr
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.vo.localLife.LogoVo">
+		<id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="logoUrl" property="logoUrl" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+                onlineType = 1
+			<!--<if test="countryId != null ">
+				and countryId = #{countryId,jdbcType=INTEGER}
+			</if>-->
+			<if test="provinceId != null and provinceId !=''">
+				and provinceId = #{provinceId}
+			</if>
+			<if test="cityId != null and cityId !=''">
+				and cityId = #{cityId}
+			</if>
+		</where>
+	</sql>
+
+	<select id="getLogoList"  resultMap="BaseResultMap">
+		SELECT id,name,logoUrl
+        FROM
+        ll_logo
+        <include refid="queryBywhere" />
+	</select>
+
+</mapper>

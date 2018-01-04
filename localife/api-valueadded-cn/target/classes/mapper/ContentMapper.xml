@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.localLife.ContentDao">
+	<sql id="table">
+		ll_content con
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.vo.localLife.ContentVo">
+		<id column="contentId" property="contentId" />
+        <result column="contentName" property="contentName" />
+        <result column="typeId" property="typeId" />
+        <result column="developerName" property="developerName" />
+        <result column="category" property="category" />
+        <result column="describe" property="describe" />
+        <result column="picUrl" property="picUrl" />
+        <result column="mark" property="mark" />
+        <result column="panoramaUrl" property="panoramaUrl" />
+        <result column="videoUrl" property="videoUrl" />
+        <collection property="versionList" resultMap="com.hiveview.dao.localLife.ContentVersionDao.BaseResultMap"/>
+	</resultMap>
+    <sql id="Base_Column_List">
+		 con.id as contentId,con.mark,con.name as contentName,con.typeId,con.developerName,con.category,con.describe,con.picUrl,con.panoramaUrl,con.videoUrl
+	</sql>
+	<sql id="queryBywhere">
+		<where>
+                con.onlineType = 1
+			<!--<if test="countryId != null ">
+				and con.countryId = #{countryId,jdbcType=INTEGER}
+			</if>-->
+			<if test="provinceId != null and provinceId !=''">
+				and con.provinceId = #{provinceId}
+			</if>
+			<if test="cityId != null and cityId !=''">
+				and con.cityId = #{cityId}
+			</if>
+            <if test="id != null">
+                and con.id = #{id}
+            </if>
+		</where>
+	</sql>
+
+	<select id="getContent" parameterType="Content"  resultMap="BaseResultMap">
+		SELECT con.id as contentId,con.mark,con.name as contentName,con.typeId,con.developerName,con.category,con.describe,con.picUrl,con.panoramaUrl,con.videoUrl,
+        <include refid="com.hiveview.dao.localLife.ContentVersionDao.Base_Column_List"/>
+        ,
+        <include refid="com.hiveview.dao.localLife.ContentVersionScreenshotDao.Base_Column_List"/>
+        FROM ll_content con left join ll_content_version cv on cv.contentId = con.id
+                left join ll_content_version_screenshot cvs on cvs.versionId = cv.id
+        <include refid="queryBywhere" />
+        ORDER BY cv.versionNumber  desc,cvs.seq desc
+	</select>
+
+</mapper>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.award.AwardOrderDao">
+	<sql id="table">
+		t_award_order
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.po.award.AwardOrder">
+		<id column="id" property="id" />
+		<id column="order_id" property="orderId" />
+		<id column="order_status" property="orderStatus" />
+		<id column="order_time" property="orderTime" />
+		<id column="award_code" property="awardCode" />
+		<id column="award_play_id" property="awardPlayId" />
+		<id column="award_detail_id" property="awardDetailId" />
+		<id column="award_user_id" property="awardUserId" />
+		<id column="award_property" property="awardProperty" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="id != null ">
+				and id = #{id,jdbcType=INTEGER}
+			</if>
+			<if test="orderId != null ">
+				and order_id = #{orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="orderStatus != null ">
+				and order_status = #{orderStatus,jdbcType=INTEGER}
+			</if>
+			<if test="awardCode != null ">
+				and award_code = #{awardCode,jdbcType=VARCHAR}
+			</if>
+			<if test="awardPlayId != null ">
+				and award_play_id = #{awardPlayId,jdbcType=INTEGER}
+			</if>
+			<if test="awardDetailId != null ">
+				and award_detail_id = #{awardDetailId,jdbcType=INTEGER}
+			</if>
+			<if test="awardUserId != null ">
+				and award_user_id = #{awardUserId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<select id="getList" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="get" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<insert id="save" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		<include refid="table" />
+		(order_id, order_status, order_time, award_code, award_play_id, award_detail_id, award_user_id,award_property)
+		VALUES
+		(#{orderId}, #{orderStatus}, #{orderTime}, #{awardCode}, #{awardPlayId},#{awardDetailId}, #{awardUserId},#{awardProperty})
+	</insert>
+	
+	<update id="update">
+		UPDATE
+		<include refid="table" />
+		<include refid="setAwardOrder" />
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+	
+	<sql id="setAwardOrder">
+		<set>
+			<if test="orderId != null ">
+				order_id = #{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="orderStatus != null ">
+				order_status = #{orderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="orderTime != null ">
+				order_time = #{orderTime},
+			</if>
+			<if test="awardCode != null ">
+				award_code = #{awardCode,jdbcType=VARCHAR},
+			</if>
+			<if test="awardPlayId != null ">
+				award_play_id = #{awardPlayId,jdbcType=INTEGER},
+			</if>
+			<if test="awardDetailId != null ">
+				award_detail_id = #{awardDetailId,jdbcType=INTEGER},
+			</if>
+			<if test="awardUserId != null ">
+				award_user_id = #{awardUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="awardProperty != null ">
+				award_property = #{awardProperty,jdbcType=INTEGER},
+			</if>
+		</set>
+	</sql>
+	
+	<select id="getAwardDiscountInfo" resultType="com.hiveview.entity.vo.api.AwardDiscountInfoVo">
+		SELECT
+		tao.order_id as tradeNo,
+		tad.award_price as awardPrice,
+		tad.award_discount as awardDiscount,
+		tad.award_video_name as awardVideoName,
+		tad.award_video_partner_id as partnerId,
+		tad.award_vip_duration as chargingDuration,
+		tad.award_video_type as awardVideoType
+		FROM
+		t_award_order tao
+		LEFT JOIN t_award_detail tad on tad.id=tao.award_detail_id
+		where 
+		tao.award_code=#{awardCode,jdbcType=VARCHAR}
+		and
+		tao.award_user_id=#{awardUserId,jdbcType=VARCHAR}
+		and
+		tao.award_detail_id=#{awardDetailId,jdbcType=INTEGER}
+	</select>
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.localLife.ContentVersionDao">
+
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.vo.localLife.ContentVersionVo">
+		<id column="versionNumber" property="versionNumber" />
+        <result column="versionDescribe" property="versionDescribe" />
+        <result column="versionSize" property="versionSize" />
+        <result column="downloadUrl" property="downloadUrl" />
+        <result column="updated_time" property="updatedTime" />
+        <collection property="screenshotList" resultMap="com.hiveview.dao.localLife.ContentVersionScreenshotDao.BaseResultMap"/>
+	</resultMap>
+    <sql id="Base_Column_List">
+		 cv.versionNumber,cv.versionDescribe,cv.versionSize,cv.downloadUrl,DATE_FORMAT(cv.updated_time,'%Y-%m-%d %H:%i:%s') AS updated_time
+	</sql>
+	<sql id="queryBywhere">
+		<where>
+			<!--<if test="countryId != null ">
+				and con.countryId = #{countryId,jdbcType=INTEGER}
+			</if>-->
+			<if test="provinceId != null and provinceId !=''">
+				and con.provinceId = #{provinceId}
+			</if>
+			<if test="cityId != null and cityId !=''">
+				and con.cityId = #{cityId}
+			</if>
+            <if test="id != null ">
+                and con.id = #{id,jdbcType=INTEGER}
+            </if>
+		</where>
+	</sql>
+
+	<select id="getContent" parameterType="Content"  resultMap="BaseResultMap">
+		SELECT con.id as contentId,con.name as contentName,con.typeId,con.developerName,con.category,con.describe,con.picUrl,con.panoramaUrl,con.videoUrl
+        FROM ll_content con
+        <include refid="queryBywhere" />
+	</select>
+
+</mapper>

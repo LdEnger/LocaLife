@@ -1,0 +1,170 @@
+/*-----------------------------------
+Time:2008.9.17
+creator:MaoMingxia
+Name:common.css
+Use:公共的css，主要用在查询后table的样式，按钮的样式.
+
+-------------------------------------  */
+.mouseover{background-color:#f9f2c1;text-align:center; }   
+.mouseout{background-color:#ebf5fb;text-align:center; } 
+.mousedown{ background-color:#f9f2c1;text-align:center; }  
+body{
+	background-color:#ffffff;
+	margin:0px auto 0px;
+	padding:0px;
+	font-size:12px;
+	color:#000000;
+}
+table{ font-size:12px; color:#000000;}
+/*目录树按钮*/
+.menu_leftblu{
+	background:url(../images/menu.gif) no-repeat;
+	width:67px;
+	height:35px;
+	float:left;
+	margin-top:-7px;
+}
+.menu_centerwh{
+	background:url(../images/menu_center2.gif) no-repeat;
+	width:67px;
+	height:28px;
+	float:left;
+}
+.menu_rightwh{
+	background:url(../images/menu_rightline2.gif) no-repeat;
+	width:66px;
+	height:28px;
+	float:left;
+}
+.dashed_line{
+	border-right:#cccccc 1px dashed;
+	height:15px; 
+}
+/*侧边收缩条*/
+.middlebar{
+	background:url(../images/middlebg.jpg) repeat-y;
+	width:7px;
+}
+/*右侧标签按钮样式*/
+.div_btn{
+	background:url(../images/blu_center.gif) repeat-x;
+	line-height:23px;
+	float:left;
+	white-space:nowrap;
+}
+.blu_left{
+	background:url(../images/blu_left.gif) no-repeat top left;
+	height:23px;
+}
+.blu_right{
+	background:url(../images/blu_right.gif) no-repeat right top;
+	height:23px;
+}
+.blu_center{
+	height:23px;
+	padding-right: 28px;
+	padding-left:5px;
+	font-size:12px;
+	color:#ffffff;
+}
+.div_whbtn{
+	background:url(../images/wh_center.gif) repeat-x;
+	line-height:23px;
+	float:left;
+	white-space:normal;
+}
+.wh_left{
+	background:url(../images/wh_left.gif) no-repeat top left;
+	height:23px;
+}
+.wh_right{
+	background:url(../images/wh_right.gif) no-repeat top right;
+	height:23px;
+}
+.wh_center{
+	height:23px;
+	padding-right:28px;
+	padding-left:5px;
+	font-size:12px;
+}
+/*右侧标签按钮下的横条*/
+.button_line{
+	height:5px;
+	overflow:hidden;
+	width:100%;
+	background-color:#2b88bc;
+}
+/*“查询”“重置”等按钮上的字体*/
+.button_font{ margin-top:-16px; margin-right:12px; color:#ffffff; cursor:hand;}
+
+/*查询条件表格边框*/
+ .search_tab_frame{border:#cccccc 1px solid;}
+
+
+/*查询后表格的显示
+.table_top:是表格头部标题的设置
+.table_contentbg:是显示数据的tr的背景色
+.buttom_font:显示页数的字体颜色
+*/
+.table_top{
+	border:#2b88bc 1px solid;
+	clear:both;
+}
+.table_top th{
+	color:#ffffff; 
+	text-align:center; 
+	font-weight:bold; 
+	background-color:#2b88bc;
+	height:20px;
+
+}
+.table_top td{ 
+	background-color:#ebf5fb;
+	
+}
+.buttom_font{
+	color:#095580;
+	text-align:right;
+}
+.table_blue{ 
+	font-size:12px; 
+	color:#565656; 	
+	font-weight:normal; 
+	background-color:#eef4f8;
+	border:#2b88bc 1px solid;
+}
+.table_blue th{
+	font-weight:normal; 
+	background-color:#bddff3;
+	text-align:right;
+}
+/*当文本框为只读的时候*/
+.inputtext{
+	background-color:expression((this.readOnly && this.readOnly==true)?"#f2f1f1":"");
+
+	border-top: 1px solid #bddff3;
+	border-right: 1px solid #7F9DB9;
+	border-bottom: 1px solid #7F9DB9;
+	border-left: 1px solid #bddff3;
+	border-style:inset;
+	height:20px;
+}
+.table_few{
+	color:#565656; 	
+	font-weight:normal; 
+	background-color:#eef4f8;
+	border:#2b88bc 1px solid;
+}
+.table_few th{
+	font-weight:normal; 
+	background-color:#bddff3;
+	text-align:left;
+}
+
+
+.select_width{ width:152px;}
+
+
+
+
+

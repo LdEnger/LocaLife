@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="api-locallife-cn:war">
+    <output-path>$PROJECT_DIR$/api-valueadded-cn/target</output-path>
+    <root id="archive" name="api-locallife-cn.war">
+      <element id="artifact" artifact-name="api-locallife-cn:war exploded" />
+    </root>
+  </artifact>
+</component>

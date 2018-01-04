@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="cms-locallife-cn:war">
+    <output-path>$PROJECT_DIR$/cms-valueadded-cn/target</output-path>
+    <root id="archive" name="cms-locallife-cn.war">
+      <element id="artifact" artifact-name="cms-locallife-cn:war exploded" />
+    </root>
+  </artifact>
+</component>

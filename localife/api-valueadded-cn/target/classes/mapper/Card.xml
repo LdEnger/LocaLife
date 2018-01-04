@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.card.CardDao">
+	<sql id="table">
+		tb_card
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.card.Card" >
+	<id column="id" property="id" />   
+	<result column="card_order_id" property="cardOrderId" />
+	<result column="card_order_status" property="cardOrderStatus" />
+	<result column="user_name" property="userName" />
+	<result column="creator_name" property="creatorName" />
+	<result column="card_from_hall" property="cardFromHall" />
+	<result column="card_from_branch" property="cardFromBranch" />
+	<result column="hall_name" property="hallName" />
+	<result column="branch_name" property="branchName" />
+	<result column="activity_id" property="activityId" />
+	<result column="activity_name" property="activityName" />
+	<result column="activation_code" property="activationCode" />
+	<result column="status" property="status" />
+	<result column="create_time" property="createTime" />
+	<result column="activation_time" property="activationTime" />
+	<result column="cancel_time" property="cancelTime" />
+	<result column="terminal_mac" property="terminalMac" />
+	<result column="terminal_sn" property="terminalSn" />
+	<result column="uid" property="uid" />
+	<result column="devicecode" property="devicecode" />
+	<result column="effective_time_length" property="effectiveTimeLength" />
+	<result column="update_time" property="updateTime" />
+	<result column="del_status" property="delStatus" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="1==1">
+				and del_status = 0
+			</if>
+			<if test="status !=null">
+				and status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="activityId !=null">
+				and activity_id = #{activityId,jdbcType=INTEGER}
+			</if>
+			<if test="cardFromBranch !=null">
+				and card_from_branch = #{cardFromBranch,jdbcType=INTEGER}
+			</if>
+			<if test="cardFromHall !=null">
+				and card_from_hall = #{cardFromHall,jdbcType=INTEGER}
+			</if>
+			<if test="createTime !=null">
+				and activation_time &gt; #{createTime,jdbcType=INTEGER}
+			</if>
+			<if test="activationTime !=null">
+				and activation_time &lt; #{activationTime,jdbcType=INTEGER}
+			</if>
+			<if test="uid !=null &amp;&amp; uid!=''">
+				and uid = #{uid,jdbcType=INTEGER}
+			</if>
+			<if test="activationCode !=null &amp;&amp; activationCode!=''">
+				and activation_code like "%"#{activationCode,jdbcType=VARCHAR}"%"
+			</if>
+			<if test="terminalMac !=null &amp;&amp; terminalMac !=''">
+				and terminal_mac  like "%"#{terminalMac,jdbcType=VARCHAR}"%"
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="setCard">
+		<set>
+		<if test="delStatus != null">
+			del_status = #{delStatus,jdbcType=INTEGER},
+		</if>
+		<if test="cardOrderId != null">
+			card_order_id = #{cardOrderId,jdbcType=VARCHAR},
+		</if>
+		<if test="cardOrderStatus != null">
+			card_order_status = #{cardOrderStatus,jdbcType=INTEGER},
+		</if>
+		<if test="terminalMac !=null &amp;&amp; terminalMac !=''">
+			terminal_mac = #{terminalMac,jdbcType=VARCHAR},
+		</if>
+		<if test="terminalSn !=null &amp;&amp; terminalSn !=''">
+			terminal_sn  = #{terminalSn,jdbcType=VARCHAR},
+		</if>
+		<if test="userName !=null &amp;&amp; userName !=''">
+			 user_name = #{userName,jdbcType=VARCHAR},
+		</if>
+		<if test="uid !=null &amp;&amp; uid !=''">
+			 uid = #{uid,jdbcType=INTEGER},
+		</if>
+		<if test="devicecode !=null &amp;&amp; devicecode !=''">
+			devicecode = #{devicecode,jdbcType=VARCHAR},
+		</if>
+		<if test="status != null">
+			<if test="2==status">
+				activation_time = now(),
+			</if>
+			<if test="4==status">
+				cancel_time = now(),
+			</if>
+			status = #{status,jdbcType=INTEGER},
+		</if>
+			update_time = now()
+		</set>
+	</sql>
+	
+	<select id="getCardByActivityCode" parameterType="String" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE activation_code = #{activationCode} AND del_status = 0
+	</select>
+	
+	<select id="getList" parameterType="com.hiveview.entity.card.Card" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  <include refid="table" />
+        <include refid="queryBywhere" />
+    </select>
+    
+   	<insert id="save" parameterType="com.hiveview.entity.card.Card" useGeneratedKeys="true">
+	  INSERT INTO <include refid="table" /> 
+	  (uid,user_name,creator_name,card_from_hall,card_from_branch,hall_name,branch_name,activity_id,activity_name,activation_code,create_time,terminal_mac,terminal_sn,effective_time_length,update_time) 
+	  VALUES
+	  (#{uid},#{userName},#{creatorName},#{cardFromHall},#{cardFromBranch},#{hallName},#{branchName},#{activityId},#{activityName},#{activationCode},now(),#{terminalMac},#{terminalSn},#{effectiveTimeLength},now());
+	</insert>
+	
+	<update id="update" parameterType="com.hiveview.entity.card.Card">
+		UPDATE <include refid="table"/>
+		<include refid="setCard"/>
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="com.hiveview.entity.card.Card">
+	   DELETE FROM <include refid="table"/>
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="getUnsucOrderList"  resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE card_order_status=0 AND del_status = 0 AND card_order_id IS NOT NULL
+	</select>
+	
+	<update id="changeOrderStatus" parameterType="String">
+		UPDATE <include refid="table"/>
+		SET card_order_status = 2
+		WHERE card_order_id=#{card_order_id,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getRepeatCard"  parameterType="com.hiveview.entity.card.Card" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE terminal_mac = #{terminalMac} AND terminal_sn  = #{terminalSn} AND activity_id = #{activityId} AND status != 1
+	</select>
+	
+	<update id="cardExpired" parameterType="String">
+		UPDATE <include refid="table"/>
+		SET status = 5
+		WHERE id=#{id}
+	</update>
+	
+	<select id="getNonactivatedCard"  parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE status = 1 AND del_status = 0 AND activity_id=#{activityId}
+	</select>
+	
+	<select id="getCardById"  parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE del_status = 0 AND id=#{id}
+	</select>
+	
+	<select id="getCardByOrderId"  parameterType="String" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE card_order_id = #{cardOrderId}
+	</select>
+</mapper>
