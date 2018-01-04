@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.localLife.ContentVersionScreenshotDao">
+	<sql id="table">
+		ll_content_version_screenshot convs
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.localLife.ContentVersionScreenshot" >
+        <id column="id" property="id" />
+        <result column="versionId" property="versionId" />
+        <result column="screenshotUrl" property="screenshotUrl" />
+        <result column="seq" property="seq" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+            <if test="versionId != null">
+                and convs.versionId = #{versionId,jdbcType=INTEGER}
+            </if>
+		</where>
+	</sql>
+
+	<sql id="setAwardActivity">
+		<set>
+            <if test="screenshotUrl != '' and screenshotUrl != null">
+                screenshotUrl = #{screenshotUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="seq != '' and seq != null">
+                seq = #{seq,jdbcType=INTEGER},
+            </if>
+		</set>
+	</sql>
+
+	<select id="get" parameterType="com.hiveview.entity.localLife.ContentVersionScreenshot" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="getBySeq" parameterType="com.hiveview.entity.localLife.ContentVersionScreenshot" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		where convs.seq = #{seq,jdbcType=INTEGER};
+	</select>
+	
+	<select id="getBigger" resultType="Integer">
+		SELECT MIN(seq) FROM
+		<include refid="table" />
+		where convs.seq &gt; #{seq,jdbcType=INTEGER};
+	</select>
+	
+	<select id="getSmaller" resultType="Integer">
+		SELECT MAX(seq) FROM
+		<include refid="table" />
+		where convs.seq &lt; #{seq,jdbcType=INTEGER};
+	</select>
+	
+	<select id="getMaxSequence"  resultType="Integer">
+		SELECT MAX(seq) FROM
+		<include refid="table" />
+	</select>
+
+	<select id="getList" parameterType="ContentVersionScreenshot" resultMap="BaseResultMap">
+		SELECT  convs.id,convs.versionId,convs.screenshotUrl,convs.seq
+        FROM
+        ll_content_version_screenshot convs
+		<include refid="queryBywhere" />
+		order by convs.seq desc
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  <include refid="table" />
+        <include refid="queryBywhere" />
+    </select>
+    
+   	<insert id="save" parameterType="ContentVersionScreenshot" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO ll_content_version_screenshot
+	  (versionId,screenshotUrl,seq)
+	  VALUES
+	 (#{versionId},#{screenshotUrl},#{seq});
+	 <selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID()
+	</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="ContentVersionScreenshot">
+		UPDATE ll_content_version_screenshot
+		<include refid="setAwardActivity"/>
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="ContentVersionScreenshot">
+	   DELETE FROM ll_content_version_screenshot
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="getActivityById" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE id = #{id,jdbcType=INTEGER}
+	</select>
+</mapper>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.localLife.LogoDao">
+	<sql id="table">
+		ll_logo l
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.localLife.Logo" >
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="cityId" property="cityId" />
+        <result column="provinceId" property="provinceId"/>
+        <result column="province_name" property="provinceName"/>
+        <result column="logoUrl" property="logoUrl" />
+        <result column="is_effective" property="isEffective" />
+        <result column="onlineType" property="onlineType" />
+        <result column="created_time" property="createdTime" />
+        <result column="created_by" property="createdBy" />
+        <result column="updated_time" property="updatedTime" />
+        <result column="updated_by" property="updatedBy" />
+        <result column="city_name" property="cityName" />
+        <result column="state" property="state" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="name != null">
+				and l.name like "%"#{name,jdbcType=VARCHAR}"%"
+			</if>
+            <if test="countryId != null">
+                and l.countryId = #{countryId,jdbcType=VARCHAR}
+            </if>
+            <if test="provinceId != null">
+                and l.provinceId = #{provinceId,jdbcType=VARCHAR}
+            </if>
+            <if test="cityId != null">
+                and l.cityId = #{cityId,jdbcType=VARCHAR}
+            </if>
+            <if test="userId != null">
+                <if test="zoneIDs != null and zoneIDs != '' ">
+                    and tzc.id in (#{zoneIDs,jdbcType=VARCHAR})
+                </if>
+            </if>
+		</where>
+	</sql>
+
+	<sql id="setAwardActivity">
+		<set>
+            <if test="name != '' and name != null">
+                l.name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="countryId != null and  countryId != ''">
+                l.countryId = #{countryId},
+            </if>
+            <if test="provinceId != null and provinceId != ''">
+                l.provinceId = #{provinceId},
+            </if>
+            <if test="cityId != null and cityId != ''">
+                l.cityId = #{cityId},
+            </if>
+            <if test="cityName != null and cityName != ''">
+                l.city_name = #{cityName},
+            </if>
+            <if test="provinceName != null and provinceName != ''">
+                l.province_name = #{provinceName},
+            </if>
+            <if test="logoUrl != null">
+                l.logoUrl = #{logoUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="isEffective != null">
+                l.is_effective = #{isEffective,jdbcType=INTEGER},
+            </if>
+            <if test="onlineType != null">
+                l.onlineType = #{onlineType,jdbcType=INTEGER},
+            </if>
+            <if test="updatedTime != null">
+                l.updated_time = #{updatedTime},
+            </if>
+            <if test="updatedBy != null">
+                l.updated_By = #{updatedBy},
+            </if>
+		</set>
+	</sql>
+
+	<select id="getLogoById"  resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		where l.id=#{id,jdbcType=INTEGER}
+	</select>
+	<select id="get" parameterType="com.hiveview.entity.localLife.Logo" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+
+	<select id="getList" parameterType="Logo" resultMap="BaseResultMap">
+		SELECT id,countryId,provinceId,province_name,cityId,city_name,NAME,is_effective,onlineType,logoUrl,created_time,created_by,updated_by,updated_time
+        FROM
+        ll_logo
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE "%"#{name}"%"
+            </if>
+            <if test="cityId != null and cityId != ''">
+                and cityId = #{cityId}
+            </if>
+            <if test="provinceId != '' and provinceId != null">
+                and provinceId = #{provinceId}
+            </if>
+            <if test="cityName != null and cityName !=''">
+                and city_name = #{cityName}
+            </if>
+            <if test="provinceName != null and provinceName != ''">
+                adn province_name = #{provinceName}
+            </if>
+        </where>
+		order by created_time desc
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  ll_logo
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE "%"#{name}"%"
+            </if>
+            <if test="cityId != null and cityId != ''">
+                and cityId = #{cityId}
+            </if>
+            <if test="provinceId != '' and provinceId != null">
+                and provinceId = #{provinceId}
+            </if>
+            <if test="cityName != null and cityName !=''">
+                and city_name = #{cityName}
+            </if>
+            <if test="provinceName != null and provinceName != ''">
+                adn province_name = #{provinceName}
+            </if>
+        </where>
+    </select>
+
+   	<insert id="save" parameterType="Logo" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO ll_logo
+	  (`name`,countryId,provinceId,cityId,logoUrl,is_effective,onlineType,created_by,updated_time,updated_by,city_name,province_name)
+	  VALUES
+	 (#{name},#{countryId},#{provinceId},#{cityId},#{logoUrl},#{isEffective},#{onlineType},#{createdBy},#{updatedTime},#{updatedBy},#{cityName},#{provinceName});
+	 <selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID()
+	</selectKey>
+	</insert>
+
+	<update id="update" parameterType="Logo">
+		UPDATE <include refid="table"/>
+		<include refid="setAwardActivity"/>
+		WHERE l.id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="Logo">
+	   DELETE FROM ll_logo
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+
+</mapper>

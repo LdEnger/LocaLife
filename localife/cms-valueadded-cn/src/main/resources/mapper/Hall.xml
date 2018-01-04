@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.HallDao">
+	<sql id="table">
+		tb_hall
+	</sql>
+	<resultMap type="Hall" id="hall">
+		<result property="id" column="id" />
+		<result property="hallName" column="hall_name" />
+		<result property="branchId" column="branch_id" />
+	</resultMap>
+	<select id="getHallList" parameterType="Integer"
+		resultMap="hall">
+		SELECT id,hall_name,branch_id
+		FROM <include refid="table"/> 
+		WHERE branch_id=#{branchId}
+	</select>
+	<insert id="save" parameterType="com.hiveview.entity.Hall" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO <include refid="table"/>
+		(hall_name,branch_id,update_time)
+		VALUES
+		(#{hallName,jdbcType=VARCHAR},#{branchId,jdbcType=INTEGER},now())
+	</insert>
+	<select id="getHallName" parameterType="String" resultType="Integer">
+		select count(1)
+		from <include refid="table"/> 
+		where hall_name = #{hallName}
+		limit 1
+	</select>
+	<select id="getHallById" parameterType="Integer"
+		resultType="String">
+		SELECT hall_name FROM 
+		<include refid="table"/> 
+		WHERE id = #{hallId}
+	</select>
+	<select id="getList" parameterType="Integer"
+		resultMap="hall">
+		SELECT id,hall_name,branch_id
+		FROM <include refid="table"/> 
+	</select>
+	
+	<delete id="delete" parameterType="com.hiveview.entity.Hall">
+	   DELETE FROM <include refid="table"/>
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+</mapper>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.hiveview.dao.sys.SysUserDao">
+
+	<sql id="table">
+		sys_user
+	</sql>
+	
+	<sql id ="queryWhere">
+	<where>
+			<if test="branchId !=null">
+				and branch_id = #{branchId,jdbcType=INTEGER}
+			</if>
+			<if test="hallId !=null">
+				and hall_id = #{hallId,jdbcType=INTEGER}
+			</if>
+			<if test="userName !=null">
+				and user_name like "%"#{userName,jdbcType=VARCHAR}"%"
+			</if>
+			<if test="roleId !=1&amp;&amp; cityCode!=null" >
+				and city_code=#{cityCode,jdbcType=VARCHAR}
+			</if>
+			</where>
+	</sql>
+	<select id="getSysUserById" parameterType="java.lang.Integer"
+		resultType="com.hiveview.entity.sys.SysUser">
+			SELECT sys_user_id AS userId, user_name AS userName, user_pwd AS userPwd,
+			user_mail AS userMail, role_id AS roleId, created_time AS createdTime, created_by AS createdBy
+			,updated_time AS updatedTime, updated_by AS updatedBy, is_effective AS isEffective
+			,branch_id AS branchId,hall_id AS hallId,branch_name AS branchName,hall_name AS hallName,role_name AS roleName
+			,province_code AS provinceCode,province_name AS provinceName,city_code AS cityCode,city_name AS cityName
+			FROM <include refid="table"/> WHERE sys_user_id=#{userId}
+	</select>
+
+	<select id="getLoginInfo" parameterType="com.hiveview.entity.sys.SysUser"
+		resultType="com.hiveview.entity.sys.SysUser">
+		SELECT sys_user_id AS userId, user_name AS userName, user_pwd AS
+		userPwd, user_mail AS userMail, role_id AS roleId, phone_number AS phoneNumber,created_time AS
+		createdTime, created_by AS createdBy, updated_time AS updatedTime,
+		updated_by AS updatedBy,branch_id AS branchId,hall_id AS hallId,role_name AS roleName,
+		hall_name AS hallName,branch_name AS branchName, is_effective AS isEffective,
+		province_code AS provinceCode,province_name AS provinceName,city_code AS cityCode,city_name AS cityName
+		FROM <include refid="table" />
+		WHERE is_effective=1 AND user_mail=#{userMail,jdbcType=VARCHAR} AND user_pwd = md5(#{userPwd,jdbcType=VARCHAR})
+	</select>
+
+	<update id="updateSysUser" parameterType="com.hiveview.entity.sys.SysUser">
+		UPDATE
+		<include refid="table" />
+		<set>
+			<if test="provinceCode!=null">
+				province_code = #{provinceCode,jdbcType=VARCHAR},
+			</if>
+			<if test="provinceName!=null">
+				province_name = #{provinceName,jdbcType=VARCHAR},
+			</if>
+			<if test="cityCode!=null">
+				city_code = #{cityCode,jdbcType=VARCHAR},
+			</if>
+			<if test="cityName!=null">
+				city_name = #{cityName,jdbcType=VARCHAR},
+			</if>
+			
+			<if test="userName!=null">
+				user_name = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="userPwd!=null">
+				user_pwd = md5(#{userPwd,jdbcType=VARCHAR}), 
+			</if>
+			<if test="userMail!=null">
+				user_mail = #{userMail,jdbcType=VARCHAR},
+			</if>
+			<if test="phoneNumber!=null">
+				phone_number = #{phoneNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="branchId==null">
+				branch_id = -1,
+			</if>
+			<if test="branchId!=null">
+				branch_id = #{branchId,jdbcType=INTEGER},
+			</if>
+			<if test="branchId==null">
+				branch_id = -1,
+			</if>
+			<if test="branchName!=null">
+				branch_name = #{branchName,jdbcType=VARCHAR},
+			</if>
+			<if test="branchName==null">
+				branch_name = '-',
+			</if>
+			<if test="hallId!=null">
+				hall_id = #{hallId,jdbcType=INTEGER},
+			</if>
+			<if test="hallId==null">
+				hall_id = -1,
+			</if>
+			<if test="hallName!=null">
+				hall_name= #{hallName,jdbcType=VARCHAR},
+			</if>
+			<if test="hallName==null">
+				hall_name= '-',
+			</if>
+			<if test="roleId!=null">
+				role_id=#{roleId,jdbcType=INTEGER},
+			</if>
+			<if test="roleName!=null">
+				role_name=#{roleName,jdbcType=INTEGER},
+			</if>
+			<if test="roleId!=null">
+				province_code=#{provinceCode,jdbcType=INTEGER},
+			</if>
+			<if test="roleName!=null">
+				province_name=#{provinceName,jdbcType=INTEGER},
+			</if>
+			<if test="roleId!=null">
+				city_code=#{cityCode,jdbcType=INTEGER},
+			</if>
+			<if test="roleName!=null">
+				city_name=#{cityName,jdbcType=INTEGER},
+			</if>
+			<if test="updatedBy!=null">
+				updated_by = #{updatedBy,jdbcType=INTEGER},
+			</if>
+			<if test="isEffective!=null">
+				is_effective = #{isEffective,jdbcType=TIMESTAMP},
+			</if>
+
+			updated_time = now()
+		</set>
+		WHERE sys_user_id=#{userId,jdbcType=INTEGER}
+	</update>
+
+	<insert id="addSysUser" parameterType="com.hiveview.entity.sys.SysUser" useGeneratedKeys="true" keyProperty="userId">
+		INSERT INTO sys_user
+		(user_name,user_pwd,user_mail,role_id,role_name,phone_number,created_time,created_by,updated_time,updated_by,is_effective,
+		province_code,province_name,city_code,city_name,branch_id,hall_id,branch_name,hall_name)
+		VALUES
+		(#{userName,jdbcType=VARCHAR},md5(#{userPwd,jdbcType=VARCHAR}),#{userMail,jdbcType=VARCHAR},
+		#{roleId,jdbcType=INTEGER},#{roleName,jdbcType=VARCHAR},#{phoneNumber,jdbcType=VARCHAR},#{createdTime,jdbcType=TIMESTAMP},#{createdBy,jdbcType=INTEGER},
+		#{updatedTime,jdbcType=TIMESTAMP},0,#{isEffective},#{provinceCode,jdbcType=VARCHAR},#{provinceName,jdbcType=VARCHAR},
+		#{cityCode,jdbcType=VARCHAR},#{cityName,jdbcType=VARCHAR},
+		#{branchId,jdbcType=INTEGER},#{hallId,jdbcType=INTEGER},#{branchName,jdbcType=VARCHAR},#{hallName,jdbcType=VARCHAR})
+	</insert>
+
+	<select id="getCount" parameterType="com.hiveview.entity.sys.SysUser"
+		resultType="INTEGER">
+		SELECT COUNT(*) FROM
+		<include refid="table" />
+		WHERE 1=1
+		<if test="userName!=null">
+			AND user_name = #{userName,jdbcType=VARCHAR}
+		</if>
+		<if test="userMail!=null">
+			AND user_mail = #{userMail,jdbcType=VARCHAR}
+		</if>
+		<if test="roleId != null and roleId !=1">
+			AND city_code=#{cityCode,jdbcType=VARCHAR}
+		</if>
+	</select>
+
+	<select id="getUserList" parameterType="com.hiveview.entity.sys.SysUser"
+		resultType="com.hiveview.entity.sys.SysUser">
+		SELECT sys_user_id userId,user_name userName,user_pwd userPwd,
+		user_mail userMail,role_id roleId,role_name roleName,phone_number phoneNumber,created_time createdTime,
+		created_by createdBy,updated_time updatedTime,updated_by updatedBy,is_effective isEffective,
+		province_code provinceCode,province_name provinceName,city_code cityCode,city_name cityName,
+		branch_id branchId,hall_id hallId,branch_name branchName,hall_name hallName
+		FROM <include refid="table" />
+		<include refid="queryWhere" />
+		ORDER BY sys_user_id DESC
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+	<delete id="dropAccountByMail" parameterType="Integer">
+		delete from
+		<include refid="table" />
+		WHERE sys_user_id = #{userId}
+	</delete>
+</mapper>

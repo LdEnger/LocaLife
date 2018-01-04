@@ -1,0 +1,3 @@
+上线前请确保
+1.修改env.properties的pro值为final,执行EnvConstants的main方法确认ENV_VER的值为：conf/final/final。
+2.spring.xml context:property-placeholder的location属性为classpath:conf/final/final_conn.properties。

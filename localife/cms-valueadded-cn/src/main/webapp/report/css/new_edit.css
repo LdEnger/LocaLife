@@ -1,0 +1,509 @@
+body{
+	font-family:"monospace", "Ms song";
+	font-size:12px;
+}
+/*链接颜色的设置*/
+a:link{
+	color:#333333;
+	text-decoration:underline;
+}
+a:visited{
+	color:#333333;
+	text-decoration:underline;
+}
+a:hover{
+	color:#ff6600;
+	text-decoration:underline;
+}
+a:active{
+	color:#ff6600;
+	text-decoration:underline;
+}
+table{font-size:12px;}
+
+body {
+	margin:	0px;
+	padding:0px;
+	height:		auto;
+	width:		auto;
+}
+
+form {
+	margin:		0;
+	padding:	0;
+}
+
+.titlepopup {
+	text-indent: 1px;
+	color: #072C34;
+	background-image: url("../images/poputel-bg.gif");
+	//background-color: #84B3BC;
+	height: 20px;
+	line-height: 20px;
+	margin: 0px;
+	position: relative;
+	cursor: hand;
+
+}
+
+.titleseparator {
+	background-color: #84B3BC;
+	color: #84B3BC;
+	margin: -10px 0;
+	padding: 0px;
+	height: 4px;
+}
+
+.sitemappath {
+	display: none;
+}
+
+table th
+{
+	font-weight:normal;
+}
+
+
+
+
+
+.table_blue,#table_blue {
+	border-color:#64A7AD;
+}
+
+.table_blue th ,#table_blue th {
+	color: #1E3739;
+	background-color: #A5CED1;
+}
+
+
+.table_blue td,#table_blue td {
+	background-color: #EAF4F4;
+}
+
+.table_blue2{
+	border:0px;
+}
+.table-blue2 td{
+	background-color: #EAF4F4;
+}
+.table_blue2 th{
+	background-color: #A5CED1;
+}
+.tableb_default td,.tableb_default th {
+	margin: 0px;
+	padding: 0px;
+	vertical-align: middle;
+	height: 25px;
+}
+.table_default {
+	border:#2b88bc 1px solid;
+	clear: both;
+	margin: 0;
+}
+
+.tableb_default th {
+	color: #513E09;
+	font-weight: bold;
+	text-align: right;
+}
+
+.table_layout {
+	margin: 0px;
+	padding: 0px;
+	border:0px;
+	width: 845px;
+}
+.table_layout td,.table_layout th {
+	margin: 0px;
+	padding: 0px;
+	vertical-align: top;
+	text-align: left;
+}
+
+.table_default th {
+	
+	font-size: 12px;
+	color: #1E3739;
+
+	background-color: #bddff3;
+	text-align:center;
+	font-weight: normal;
+	
+}
+
+.table_defaulttop{
+	border:#64a7ad 1px solid;
+	margin:0px;
+	padding:0px;
+}
+.table_defaulttop td{
+	background-color: #EAF4F4;
+	height: 25px;
+	text-align:left;
+}
+.table_defaulttop th{
+	background-color: #bddff3;
+	text-align:center;
+	
+}
+.table_default td {
+	background-color: #EAF4F4;
+	height: 25px;
+}
+.table_default2{
+	border:#64a7ad 1px solid;
+	border-top-style:none;
+	border-buttom-style:none;
+	margin:0px;
+	padding:0px;
+}
+.table_default2 td{
+	background-color: #e2f9f5;	
+}
+.table_default2 th{
+	background-color: #9fdbd2;
+	text-align:center;
+}
+.table_default3{
+	border:#64a7ad 1px solid;
+	border-top-style:none;
+	border-buttom-style:none;
+	margin:0px;
+	padding:0px;
+}
+.table_default3 td{
+	background-color: #eef6e3;	
+}
+.table_default3 th{
+	background-color: #c2db9f;
+	text-align:center;
+}
+.table_default4{
+	border:#64a7ad 1px solid;
+	border-top-style:none;
+	border-buttom-style:none;
+	margin:0px;
+	padding:0px;
+}
+.table_default4 td{
+	background-color: #fafaea;
+}
+.table_default4 th{
+	background-color: #d9db9f;
+	text-align:center;
+}
+/*表格样式 1 */
+.grid_default{
+	clear: both;
+	border-collapse:collapse;
+}
+
+
+.grid_default tr.selected,.grid_default tr.mouseover{
+	background-color: #FBF4F5;
+}
+
+.grid_default th ,.grid_default td{
+	border: 1px solid #C58B94;
+	height: 18px;
+	font-weight: normal;
+	padding: 1px;
+}
+
+.fuscous{
+	background-color:#EFF7FE;
+
+}
+
+.grid_default thead,.grid_default .thead th {
+	background-color: #EFD8DC;
+}
+
+.grid_default thead .sortdown ,.grid_default .thead th.sortdown {
+	background-image: url(../images/sort_dn.gif);
+	background-repeat: no-repeat;
+	background-position: right center;
+	padding-right:9px;
+}
+
+.grid_default thead .sortup ,.grid_default .thead th.sortup {
+	background-image: url(../images/sort_up.gif);
+	background-repeat: no-repeat;
+	background-position: right center; 
+	padding-right:9px;
+	
+}
+.grid_default thead .sortup a,.grid_default .thead th.sortup a,
+.grid_default thead .sortdown a,.grid_default .thead th.sortdown a{
+	display:block;
+	font-weight:bold;
+}
+
+.grid_default tbody th,.grid_default .tbody_th{
+	background-color: #F7EAEC;
+	text-align: center;
+}
+
+.grid_default tfoot td,.grid_default .tpage td {
+	text-align: right;
+	border: 0px;
+	height: 25px;
+}
+
+.grid_dotted_default {
+	border: 0px;
+}
+
+.grid_dotted_default td ,.grid_dotted_default th {
+	text-align: center;
+	padding:2px;
+
+}
+
+.grid_dotted_default td {
+	border-bottom:1px dotted #646464;
+}
+
+.grid_dotted_default .head th,.grid_dotted_default .thead th
+{
+	background-color1:#84B3BC;
+	color:#000000;
+	font-weight:bold;
+	height:22px;
+	padding-bottom: 6px;
+	border-left-width: 0px;
+	border-left-style: solid;
+	border-left-color: #FFFFFF;
+	background-repeat: repeat-x;
+	background-position: bottom;
+	
+}
+
+.grid_dotted_default .head th a,.grid_dotted_default .thead th a
+{
+	color:#FFFFFF;
+	font-weight:bold;
+}
+
+.grid_dotted_default .separator {
+	background-color: #057381;
+	height: 3px;
+}
+
+.grid_dotted_default tfoot td,.grid_dotted_default .tpage td {
+	text-align: right;
+	border: 0px;
+	height: 25px;
+}
+
+
+.grid_blue {
+	border: 0px solid #4D9AC1;
+}
+.grid_blue .head th,.grid_blue .thead th
+{
+	background-color1:#84B3BC;
+	background-image: url(../images/bg_grid_blue_head.gif);
+}
+.grid_blue tr.selected,.grid_blue tr.mouseover{
+	background-color: #E0F0F8;
+}
+.grid_blue th ,.grid_blue td{
+	border: 1px solid #4D9AC1;
+}
+
+.grid_blue thead ,.grid_blue .thead th{
+	background-color: #8CC2DD;
+}
+
+.grid_blue tbody th,.grid_blue .tbody_th{
+	background-color: #E0F0F8;
+}
+
+.inputblue {
+    background-color:expression((this.readOnly && this.readOnly==true)?"#f0f0f0":"");
+	color: #003337;
+	border-top: 1px solid #3B7074;
+	border-right: 1px solid #CAE2E4;
+	border-bottom: 1px solid #CAE2E4;
+	border-left: 1px solid #3B7074;
+	margin-left:2px;
+	height: 16px;
+
+}
+
+
+
+input.readonly,textarea.readonly
+{
+	background-color:transparent;
+	border: 0px;
+	margin-top:0px;
+	margin-bottom:0px;
+}
+
+
+textarea {
+	overflow: auto;
+}
+.btn001{
+	width: 55px ;
+	height: 22px ;
+	border-width: 0px ; 
+	background-image: url("../images/but-one.gif");
+	cursor: hand;
+	background-color:transparent;
+	color:#000000 ;
+	font-family: "monospace", "Ms song";
+	text-align: center ;
+	vertical-align: text-bottom;
+	font-size: 12px	   
+ }
+.btn002{
+	width: 69px ;
+	height: 22px ;
+	border-width: 0px ; 
+	background-image: url("../images/but-two.gif");
+	cursor: hand;
+	background-color:transparent;
+	color:#000000 ;
+	font-family: "monospace", "Ms song";
+	text-align: center ;
+	vertical-align: text-bottom;
+	font-size: 12px	   
+ }
+ 
+ .btn004{
+	width: 98px ;
+	height: 22px ;
+	border-width: 0px ; 
+	background-image: url("../images/but-four.gif");
+	cursor: hand;
+	background-color:transparent;
+	color:#000000 ;
+	font-family: "monospace", "Ms song";
+	text-align: center ;
+	vertical-align: text-bottom;
+	font-size: 12px	   
+ }
+
+.btn006{
+	width: 98px ;
+	height: 22px ;
+	border-width: 0px ; 
+	background-image: url("../images/but-six.gif");
+	cursor: hand;
+	background-color:transparent;
+	color:#000000 ;
+	font-family: "monospace", "Ms song";
+	text-align: center ;
+	vertical-align: text-bottom;
+	font-size: 12px	   
+ }
+ 
+ .apphead .appfollowimg {
+        
+	display: block;
+	float: left;
+	margin-right: 3px;
+	cursor: hand;
+	text-align:left;
+}
+
+.apphead  .appnavimg {
+        
+	display: none;
+	float: left;
+	margin-right: 3px;
+	cursor: hand;
+	text-align:left;
+}
+.appsection .apphead {
+	background-color: #EAF4F4;
+}
+
+.titlepopupimg {
+	display: block;
+	margin-right: 3px;
+	cursor: hand;
+	position: absolute;
+	right: 0px;
+}
+
+.popupsection {
+	margin-bottom: 2px;
+}
+/*绿色按钮样式*/
+.button_green{
+	width:48px;
+	height:20px;
+	background-color:#afbc3f;
+	border:#95a337 1px solid;
+	line-height:20px;
+	color:#ffffff;
+	text-align:center;
+	line-height:20px;
+	vertical-align:middle;
+}
+/*四个字*/
+.button_green2{
+	width:54px;
+	height:20px;
+	background-color:#afbc3f;
+	border:#95a337 1px solid;
+	line-height:20px;
+	color:#ffffff;
+	text-align:center;
+	line-height:20px;
+	vertical-align:middle;
+
+}
+/*四字以上*/
+.button_green3{
+	width:86px;
+	height:20px;
+	background-color:#afbc3f;
+	border:#95a337 1px solid;
+	line-height:20px;
+	color:#ffffff;
+	text-align:center;
+	line-height:20px;
+	vertical-align:middle;
+}
+.button_green4{
+	width:94px;
+	height:20px;
+	background-color:#afbc3f;
+	border:#95a337 1px solid;
+	line-height:20px;
+	color:#ffffff;
+	text-align:center;
+	line-height:20px;
+	vertical-align:middle;
+}
+/*灰色按钮样式*/
+.button_gray{
+	width:48px;
+	height:20px;
+	background-color:#cccccc;
+	line-height:20px;
+	text-align:center;
+	vertical-align:middle;
+	color:#000000;
+}
+
+.aaa{
+	background-color:red;
+}
+
+
+
+
+
+
+
+
+
+
+

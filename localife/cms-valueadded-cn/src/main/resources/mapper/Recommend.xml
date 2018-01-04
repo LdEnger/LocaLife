@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.localLife.RecommendDao">
+	<sql id="table">
+		ll_recommend r
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.localLife.Recommend" >
+        <id column="id" property="id" />
+        <result column="contentId" property="contentId" />
+        <result column="typeId" property="typeId" />
+        <result column="countryId" property="countryId" />
+        <result column="provinceId" property="provinceId" />
+        <result column="cityId" property="cityId" />
+        <result column="name" property="name" />
+        <result column="picUrl" property="picUrl" />
+        <result column="is_effective" property="isEffective" />
+        <result column="onlineType" property="onlineType" />
+        <result column="created_time" property="createdTime" />
+        <result column="created_by" property="createdBy" />
+        <result column="updated_time" property="updatedTime" />
+        <result column="updated_by" property="updatedBy" />
+        <result column="city_name" property="cityName" />
+        <result column="seq" property="seq" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="name != null">
+				and r.name like "%"#{name,jdbcType=VARCHAR}"%"
+			</if>
+            <if test="userId != null">
+                <if test="zoneIDs != null and zoneIDs != '' ">
+                    and tzc.id in (#{zoneIDs,jdbcType=VARCHAR})
+                </if>
+            </if>
+            <if test="contentId != null">
+                and r.contentId = #{contentId,jdbcType=INTEGER}
+            </if>
+            <if test="countryId != null">
+                and r.countryId = #{countryId,jdbcType=VARCHAR}
+            </if>
+            <if test="provinceId != null">
+                and r.provinceId = #{provinceId,jdbcType=VARCHAR}
+            </if>
+            <if test="cityId != null">
+                and r.cityId = #{cityId,jdbcType=VARCHAR}
+            </if>
+		</where>
+	</sql>
+
+	<sql id="setAwardActivity">
+		<set>
+            <if test="name != '' and name != null">
+                r.name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="contentId != null">
+                r.contentId = #{contentId,jdbcType=INTEGER},
+            </if>
+            <if test="countryId != null and countryId  != ''">
+                r.countryId = #{countryId},
+            </if>
+            <if test="provinceId != null and provinceId != ''">
+                r.provinceId = #{provinceId},
+            </if>
+			<if  test="provinceName != null and provinceName != ''">
+				r.province_name =#{provinceName},
+			</if>
+			<if test="cityName != null and cityName != ''">
+				r.city_name = #{cityName},
+			</if>
+            <if test="cityId != null and cityId != ''">
+                r.cityId = #{cityId},
+            </if>
+            <if test="typeId != null">
+                r.typeId = #{typeId,jdbcType=INTEGER},
+            </if>
+            <if test="picUrl != null">
+                r.picUrl = #{picUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="isEffective != null">
+                r.is_effective = #{isEffective,jdbcType=INTEGER},
+            </if>
+            <if test="onlineType != null">
+                r.onlineType = #{onlineType,jdbcType=INTEGER},
+            </if>
+            <if test="updatedTime != null">
+                r.updated_time = #{updatedTime},
+            </if>
+            <if test="updatedBy != null">
+                r.updated_By = #{updatedBy},
+            </if>
+            <if test="seq != null">
+                r.seq = #{seq,jdbcType=INTEGER},
+            </if>
+		</set>
+	</sql>
+	
+	<select id="getRecommendById"  resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		where r.id=#{id,jdbcType=INTEGER}
+	</select>
+	<select id="get" parameterType="com.hiveview.entity.localLife.Recommend" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+	
+	<select id="getBySeq" parameterType="com.hiveview.entity.localLife.Recommend" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<where>
+			1=1
+			<if test="seq != null">
+				AND seq = #{seq,jdbcType=INTEGER}
+			</if>
+
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+		</where>
+		limit 1
+	</select>
+	
+	<select id="getBigger" parameterType="com.hiveview.entity.localLife.Recommend" resultType="Integer">
+		SELECT MIN(seq) FROM
+		<include refid="table" />
+		<where>
+			1=1
+			<if test="name != null and name !=''">
+				and r.name like "%"#{name,jdbcType=VARCHAR}"%"
+			</if>
+			<if test="seq != null">
+				and seq &gt; #{seq,jdbcType=INTEGER}
+			</if>
+
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getSmaller" parameterType="com.hiveview.entity.localLife.Recommend" resultType="Integer">
+		SELECT MAX(seq) FROM
+		<include refid="table" />
+		<where>
+			1=1
+			<if test="name != null and name !=''">
+				and r.name like "%"#{name,jdbcType=VARCHAR}"%"
+			</if>
+			<if test="seq != null">
+				AND  seq &lt; #{seq,jdbcType=INTEGER}
+			</if>
+
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+		</where>
+
+	</select>
+	
+	<select id="getMaxSequence" parameterType="com.hiveview.entity.localLife.Recommend" resultType="Integer">
+		SELECT MAX(seq) FROM
+		<include refid="table" />
+		<where>
+			1=1
+			<if test="name != null and name !=''">
+				and r.name like "%"#{name,jdbcType=VARCHAR}"%"
+			</if>
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+		</where>
+	</select>
+
+	<select id="getMinSequence" parameterType="com.hiveview.entity.localLife.Recommend" resultType="Integer">
+		SELECT  min(seq) FROM
+		<include refid="table" />
+		<where>
+			1=1
+			<if test="name != null and name !=''">
+				and r.name like "%"#{name,jdbcType=VARCHAR}"%"
+			</if>
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+		</where>
+	</select>
+	<select id="getMinSequence1" parameterType="com.hiveview.entity.localLife.Recommend" resultType="Integer">
+		SELECT min(seq) FROM
+		<include refid="table" />
+	</select>
+	<select id="getList" parameterType="Recommend" resultMap="BaseResultMap">
+		SELECT id,countryId,provinceId,province_name,cityId,city_name,NAME,is_effective,onlineType,seq,created_time,created_by,updated_by,updated_time,contentId,typeId,picUrl
+        FROM
+        ll_recommend
+		<where>
+			<if test="name != null and name != ''">
+				AND name LIKE "%"#{name}"%"
+			</if>
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+			<if test="cityName != null and cityName !=''">
+				and city_name = #{cityName}
+			</if>
+
+			<if test="provinceName != null and provinceName != ''">
+				adn province_name = #{provinceName}
+			</if>
+		</where>
+		order by seq ASC
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+
+	<select id="getList1" parameterType="Recommend" resultMap="BaseResultMap">
+		SELECT id,countryId,provinceId,province_name,cityId,city_name,NAME,is_effective,onlineType,seq,created_time,created_by,updated_by,updated_time,contentId,typeId,picUrl
+		FROM
+		ll_recommend
+		<where>
+			<if test="name != null and name != ''">
+				AND name LIKE "%"#{name}"%"
+			</if>
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+			<if test="cityName != null and cityName !=''">
+				and city_name = #{cityName}
+			</if>
+			<if test="contentId != null" >
+				and contentId = #{contentId}
+			</if>
+			<if test="provinceName != null and provinceName != ''">
+				adn province_name = #{provinceName}
+			</if>
+		</where>
+		order by seq ASC
+	</select>
+
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  ll_recommend
+		<where>
+			<if test="name != null and name != ''">
+				AND name LIKE "%"#{name}"%"
+			</if>
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+			<if test="cityName != null and cityName !=''">
+				and city_name = #{cityName}
+			</if>
+			<if test="provinceName != null and provinceName != ''">
+				adn province_name = #{provinceName}
+			</if>
+		</where>
+    </select>
+    
+   	<insert id="save" parameterType="Recommend" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO ll_recommend
+	  (`name`,contentId,countryId,provinceId,cityId,typeId,picUrl,is_effective,onlineType,created_by,updated_time,updated_by,seq,city_name,province_name)
+	  VALUES
+	 (#{name},#{contentId},#{countryId},#{provinceId},#{cityId},#{typeId},#{picUrl},#{isEffective},#{onlineType},#{createdBy},#{updatedTime},#{updatedBy},#{seq},#{cityName},#{provinceName});
+	 <selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID()
+	</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Recommend">
+		UPDATE <include refid="table"/>
+		<include refid="setAwardActivity"/>
+		<where>
+			<if test="id != null">
+				AND r.id=#{id,jdbcType=INTEGER}
+			</if>
+		</where>
+
+	</update>
+
+	<delete id="delete" parameterType="Recommend">
+	   DELETE FROM ll_recommend
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="getActivityById" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE id = #{id,jdbcType=INTEGER}
+	</select>
+
+
+</mapper>

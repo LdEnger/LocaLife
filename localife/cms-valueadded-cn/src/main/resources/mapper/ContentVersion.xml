@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.localLife.ContentVersionDao">
+	<sql id="table">
+		ll_content_version conv
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.localLife.ContentVersion" >
+        <id column="id" property="id" />
+        <result column="contentId" property="contentId" />
+        <result column="versionNumber" property="versionNumber" />
+        <result column="versionDescribe" property="versionDescribe" />
+        <result column="versionSize" property="versionSize" />
+        <result column="downloadUrl" property="downloadUrl" />
+        <result column="updated_time" property="updatedTime" />
+        <result column="update_by" property="updateBy" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+            <if test="contentId != null">
+                and conv.contentId = #{contentId,jdbcType=INTEGER}
+            </if>
+		</where>
+	</sql>
+
+	<sql id="setAwardActivity">
+		<set>
+            <if test="versionNumber != '' and versionNumber != null">
+                conv.versionNumber = #{versionNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="versionDescribe != null">
+                conv.versionDescribe = #{versionDescribe,jdbcType=INTEGER},
+            </if>
+            <if test="versionSize != null">
+                conv.versionSize = #{versionSize,jdbcType=VARCHAR},
+            </if>
+            <if test="downloadUrl != null">
+                conv.downloadUrl = #{downloadUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedTime == null">
+                conv.updated_time = now(),
+            </if>
+		</set>
+	</sql>
+	
+	<select id="getContentVersionById"  resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		where conv.id=#{id,jdbcType=INTEGER}
+	</select>
+
+	<select id="getBigger" resultType="Integer">
+		SELECT MIN(sequence) FROM
+		<include refid="table" />
+		where sequence &gt; #{sequence,jdbcType=INTEGER};
+	</select>
+	
+	<select id="getSmaller" resultType="Integer">
+		SELECT MAX(sequence) FROM
+		<include refid="table" />
+		where sequence &lt; #{sequence,jdbcType=INTEGER};
+	</select>
+	
+	<select id="getMaxSequence"  resultType="Integer">
+		SELECT MAX(sequence) FROM
+		<include refid="table" />
+	</select>
+
+	<select id="getList" parameterType="ContentVersion" resultMap="BaseResultMap">
+		SELECT  conv.id,conv.contentId,conv.versionNumber,conv.versionDescribe,conv.versionSize,conv.downloadUrl,conv.updated_time,conv.updated_by
+        FROM
+        ll_content_version conv
+		<include refid="queryBywhere" />
+	    ORDER BY conv.versionNumber  desc
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  <include refid="table" />
+        <include refid="queryBywhere" />
+    </select>
+    
+   	<insert id="save" parameterType="ContentVersion" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO ll_content_version
+	  (contentId,versionNumber,versionDescribe,versionSize,downloadUrl,updated_by)
+	  VALUES
+	 (#{contentId},#{versionNumber},#{versionDescribe},#{versionSize},#{downloadUrl},#{updatedBy});
+	 <selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID()
+	</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="ContentVersion">
+		UPDATE <include refid="table"/>
+		<include refid="setAwardActivity"/>
+		WHERE conv.id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="ContentVersion">
+	   DELETE FROM ll_content_version
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="getActivityById" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE id = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getVersionCount" parameterType="ContentVersion"  resultType="INTEGER">
+		SELECT COUNT(1) FROM ll_content_version WHERE
+		1 = 1
+		<if test="contentId != null and contentId != ''">
+			and contentId = #{contentId}
+		</if>
+		<if test="versionNumber != null and versionNumber != ''">
+			AND  versionNumber = #{versionNumber}
+		</if>
+	</select>
+</mapper>

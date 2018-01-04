@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.localLife.LabelDao">
+	<sql id="table">
+		ll_label l
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.localLife.Label" >
+        <id column="id" property="id" />
+        <result column="contentId" property="contentId" />
+        <result column="cityId" property="cityId" />
+		<result column="city_name" property="cityName"/>
+        <result column="name" property="name" />
+        <result column="is_effective" property="state" />
+        <result column="onlineType" property="onlineType" />
+        <result column="created_time" property="createdTime" />
+        <result column="created_by" property="createdBy" />
+        <result column="updated_time" property="updatedTime" />
+        <result column="updated_by" property="updatedBy" />
+        <result column="city_name" property="cityName" />
+        <result column="seq" property="seq" />
+		<result column="province_name" property="provinceName"/>
+		<result column="city_name" property="cityName"/>
+		<result column="provinceId" property="provinceId"/>
+		<result column="province_name" property="provinceName"/>
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="name != null">
+				and l.name like "%"#{name,jdbcType=VARCHAR}"%"
+			</if>
+            <if test="contentId != null">
+                and l.contentId = #{contentId,jdbcType=INTEGER}
+            </if>
+            <if test="countryId != null">
+                and l.countryId = #{countryId,jdbcType=VARCHAR}
+            </if>
+            <if test="provinceId != null">
+                and l.provinceId = #{provinceId,jdbcType=VARCHAR}
+            </if>
+            <if test="cityId != null">
+                and l.cityId = #{cityId,jdbcType=VARCHAR}
+            </if>
+            <if test="userId != null">
+                <if test="zoneIDs != null  and zoneIDs != '' ">
+                    and tzc.id in (#{zoneIDs,jdbcType=VARCHAR})
+                </if>
+            </if>
+		</where>
+	</sql>
+
+	<sql id="setAwardActivity">
+		<set>
+            <if test="name != '' and name != null">
+                l.name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="contentId != null">
+                l.contentId = #{contentId,jdbcType=INTEGER},
+            </if>
+            <if test="countryId != null and countryId != ''">
+                l.countryId = #{countryId},
+            </if>
+            <if test="provinceId != null and  provinceId != ''">
+                l.provinceId = #{provinceId},
+            </if>
+            <if test="cityId != null and cityId != ''" >
+                l.cityId = #{cityId},
+            </if>
+			<if test="cityName != null and cityName != ''">
+				l.city_name = #{cityName},
+			</if>
+			<if test="provinceName != null and provinceName != ''">
+				l.province_name = #{provinceName},
+			</if>
+            <if test="state != null">
+                l.is_effective = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="onlineType != null">
+                l.onlineType = #{onlineType,jdbcType=INTEGER},
+            </if>
+            <if test="updatedTime != null">
+                l.updated_time = #{updatedTime},
+            </if>
+            <if test="updatedBy != null">
+                l.updated_By = #{updatedBy},
+            </if>
+            <if test="seq != null">
+                l.seq = #{seq,jdbcType=INTEGER},
+            </if>
+		</set>
+	</sql>
+
+	<select id="getLabelById"  resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		where l.id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="get" parameterType="com.hiveview.entity.localLife.Label" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="getBySeq" parameterType="com.hiveview.entity.localLife.Label" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<where>
+			1=1
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+			<if test="seq != null">
+			and l.seq = #{seq,jdbcType=INTEGER}
+		</if>
+		</where>
+
+	</select>
+
+	<select id="getBigger" resultType="Integer" parameterType="com.hiveview.entity.localLife.Label">
+		SELECT MIN(seq) FROM
+		<include refid="table" />
+		<where>
+
+			1=1
+			<if test="name != null and name !=''">
+				and l.name like "%"#{name,jdbcType=VARCHAR}"%"
+			</if>
+		<if test="cityId != null and cityId != ''">
+		and cityId = #{cityId}
+		</if>
+		<if test="provinceId != '' and provinceId != null">
+			and provinceId = #{provinceId}
+		</if>
+			<if test="seq != null">
+				and l.seq &gt; #{seq,jdbcType=INTEGER}
+			</if>
+		</where>
+	</select>
+
+	<select id="getSmaller" resultType="Integer" parameterType="com.hiveview.entity.localLife.Label">
+		SELECT MAX(seq) FROM
+		<include refid="table" />
+		<where>
+			1=1
+			<if test="name != null and name !=''">
+				and l.name like "%"#{name,jdbcType=VARCHAR}"%"
+			</if>
+			<if test="seq != null">
+				and l.seq &lt; #{seq,jdbcType=INTEGER}
+			</if>
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+
+		</where>
+	</select>
+
+	<select id="getMaxSequence"  resultType="Integer" parameterType="com.hiveview.entity.localLife.Label">
+		SELECT MAX(seq) FROM
+		<include refid="table" />
+		<where>
+			1=1
+			<if test="name != null and name !=''">
+				and l.name like "%"#{name,jdbcType=VARCHAR}"%"
+			</if>
+		<if test="cityId != null and cityId != ''">
+			and cityId = #{cityId}
+		</if>
+		<if test="provinceId != '' and provinceId != null">
+			and provinceId = #{provinceId}
+		</if>
+		</where>
+	</select>
+
+	<select id="getMinSequence"   resultType="Integer" parameterType="com.hiveview.entity.localLife.Label">
+		SELECT MIN(seq) FROM
+		<include refid="table" />
+		<where>
+			1=1
+			<if test="name != null and name !=''">
+				and l.name like "%"#{name,jdbcType=VARCHAR}"%"
+			</if>
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+		</where>
+	</select>
+	<select id="getMinSequence1"   resultType="Integer" parameterType="com.hiveview.entity.localLife.Label">
+		SELECT MIN(seq) FROM
+		<include refid="table" />
+	</select>
+	<select id="getList" parameterType="Label" resultMap="BaseResultMap">
+		SELECT id,countryId,provinceId,province_name,cityId,city_name,NAME,is_effective,onlineType,seq,created_time,created_by,updated_by,updated_time
+		FROM ll_label
+		<where>
+			<if test="name != null and name != ''">
+				AND name LIKE "%"#{name}"%"
+			</if>
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+			<if test="cityName != null and cityName !=''">
+				and city_name = #{cityName}
+			</if>
+			<if test="provinceName != null and provinceName != ''">
+				and province_name = #{provinceName}
+			</if>
+		</where>
+		order by seq asc
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM ll_label
+		<where>
+			<if test="name != null and name != ''">
+				AND name LIKE "%"#{name}"%"
+			</if>
+			<if test="cityId != null and cityId != ''">
+				and cityId = #{cityId}
+			</if>
+			<if test="provinceId != '' and provinceId != null">
+				and provinceId = #{provinceId}
+			</if>
+			<if test="cityName != null and cityName !=''">
+				and city_name = #{cityName}
+			</if>
+			<if test="provinceName != null and provinceName != ''">
+				adn province_name = #{provinceName}
+			</if>
+		</where>
+    </select>
+
+   	<insert id="save" parameterType="Label" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO ll_label
+	  (`name`,countryId,provinceId,cityId,is_effective,onlineType,created_by,updated_time,updated_by,seq,province_name,city_name)
+	  VALUES
+	 (#{name},#{countryId},#{provinceId},#{cityId},#{state},#{onlineType},#{createdBy},#{updatedTime},#{updatedBy},#{seq},#{provinceName},#{cityName});
+	 <selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID()
+	</selectKey>
+	</insert>
+
+	<update id="update" parameterType="Label">
+		UPDATE <include refid="table"/>
+		<include refid="setAwardActivity"/>
+		<where>
+			1=1
+			<if test="id != null">
+				and l.id=#{id,jdbcType=INTEGER}
+			</if>
+		</where>
+	</update>
+
+	<delete id="delete" parameterType="Label">
+	   DELETE FROM ll_label
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+
+    <delete id="deleteLabelContent" parameterType="Label">
+	   DELETE FROM ll_label_content
+	   WHERE contentId=#{contentId,jdbcType=INTEGER} and labelId=#{labelId,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="getActivityById" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE id = #{id,jdbcType=INTEGER}
+	</select>
+</mapper>

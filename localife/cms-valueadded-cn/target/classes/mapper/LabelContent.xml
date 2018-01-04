@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.localLife.LabelContentDao">
+	<sql id="table">
+		ll_label_content l
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.localLife.LabelContent" >
+        <id column="id" property="id" />
+        <result column="contentId" property="contentId" />
+        <result column="labelId" property="labelId" />
+        <result column="seq" property="seq" />
+		<result column="provinceId" property="provinceId"/>
+		<result column="cityId" property="cityId"/>
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+            <if test="contentId != null">
+                and l.contentId = #{contentId,jdbcType=INTEGER}
+            </if>
+            <if test="labelId != null">
+                and l.labelId = #{labelId,jdbcType=INTEGER}
+            </if>
+		</where>
+	</sql>
+
+	<sql id="setAwardActivity">
+		<set>
+            <if test="contentId != null">
+                l.contentId = #{contentId,jdbcType=INTEGER},
+            </if>
+            <if test="labelId != null">
+                l.labelId = #{labelId,jdbcType=INTEGER},
+            </if>
+            <if test="seq != null">
+                l.seq = #{seq,jdbcType=INTEGER},
+            </if>
+		</set>
+	</sql>
+
+	<select id="getAwardActivityById"  resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		where id=#{id,jdbcType=INTEGER}
+	</select>
+
+	<select id="getCtiyIdAndProvinceID1" resultMap="BaseResultMap">
+		SELECT lav.provinceId AS provinceId,lav.cityId  AS cityId , ll.id FROM  ll_label_content ll LEFT JOIN  ll_label lav  ON ll.labelId = lav.id
+		WHERE 1 =1
+		<if test="labelId != null and labelId != ''">
+		 	and  ll.labelId = #{labelId}
+		</if>
+		<if test="id != null and id != ''">
+			and ll.id = #{id}
+		</if>
+	</select>
+
+	<select id="get" parameterType="com.hiveview.entity.localLife.LabelContent" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="getBySeq" parameterType="com.hiveview.entity.localLife.LabelContent" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		where seq = #{seq,jdbcType=INTEGER} and labelId = #{labelId,jdbcType=INTEGER};
+	</select>
+
+	<select id="getBigger" resultType="Integer">
+		SELECT MIN(seq) FROM
+		<include refid="table" />
+		where seq &gt; #{seq,jdbcType=INTEGER} and labelId = #{labelId,jdbcType=INTEGER};
+	</select>
+
+	<select id="getSmaller" resultType="Integer">
+		SELECT MAX(seq) FROM
+		<include refid="table" />
+		where seq &lt; #{seq,jdbcType=INTEGER} and labelId = #{labelId,jdbcType=INTEGER};
+	</select>
+
+	<select id="getMaxSequence"  resultType="Integer" >
+		SELECT MAX(seq) FROM
+		<include refid="table" />
+		<where>
+		<if test="labelId != null">
+			l.labelId = #{labelId,jdbcType=INTEGER},
+		</if>
+		</where>
+	</select>
+	<select id="getMinSequence"  resultType="Integer" >
+		SELECT MIN (seq) FROM
+		<include refid="table" />
+		<where>
+			<if test="labelId != null">
+				l.labelId = #{labelId,jdbcType=INTEGER},
+			</if>
+		</where>
+	</select>
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  <include refid="table" />
+        <include refid="queryBywhere" />
+    </select>
+
+   	<insert id="save" parameterType="LabelContent" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO ll_label_content
+	  (contentId,labelId,seq)
+	  VALUES
+	 (#{contentId},#{labelId},#{seq});
+	 <selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID()
+	</selectKey>
+	</insert>
+
+	<update id="update" parameterType="LabelContent">
+		UPDATE <include refid="table"/>
+		<include refid="setAwardActivity"/>
+		WHERE l.id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="LabelContent">
+	   DELETE FROM ll_label_content
+	   WHERE contentId=#{contentId,jdbcType=INTEGER} and labelId=#{labelId,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="getActivityById" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE id = #{id,jdbcType=INTEGER}
+	</select>
+
+    <select id="getList" parameterType="LabelContent" resultMap="BaseResultMap">
+        SELECT l.id,l.labelId,l.contentId,l.seq
+        FROM
+        ll_label_content l
+        <include refid="queryBywhere" />
+    </select>
+</mapper>

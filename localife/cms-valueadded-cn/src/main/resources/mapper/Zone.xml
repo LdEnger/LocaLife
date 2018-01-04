@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.sys.ZoneDao">
+	<sql id="table">
+		tb_zone
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.sys.Zone">
+		<id column="id" property="id" />
+		<result column="zone_name" property="zoneName" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+		</where>
+	</sql>
+
+	<sql id="setZone">
+		<set>
+			<if test="zoneName != null">
+				zone_name = #{zoneName,jdbcType=VARCHAR},
+			</if>
+			update_time = now()
+		</set>
+	</sql>
+
+	<select id="get" parameterType="com.hiveview.entity.sys.Zone" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+
+	<select id="getList" parameterType="com.hiveview.entity.sys.Zone" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+
+	<select id="getZoneListById" parameterType="com.hiveview.entity.sys.Zone" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+        where id = #{id}
+	</select>
+
+    <select id="getAllList" parameterType="com.hiveview.entity.sys.Zone" resultMap="BaseResultMap">
+        SELECT * FROM
+        <include refid="table" />
+    </select>
+
+	<select id="count" resultType="Integer">
+		SELECT COUNT(1) FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<insert id="save" parameterType="com.hiveview.entity.sys.Zone" useGeneratedKeys="true">
+		INSERT INTO
+		<include refid="table" />
+		(id,zone_name,update_time)
+		VALUES
+		(#{id},#{zoneName},now());
+	</insert>
+
+	<update id="update" parameterType="com.hiveview.entity.sys.Zone">
+		UPDATE
+		<include refid="table" />
+		<include refid="setZone" />
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="getZoneById" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE id = #{id}
+	</select>
+
+    <delete id="delete" parameterType="com.hiveview.entity.sys.Zone">
+	   DELETE FROM tb_zone
+	</delete>
+
+</mapper>

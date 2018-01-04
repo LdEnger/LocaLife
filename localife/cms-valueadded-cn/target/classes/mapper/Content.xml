@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.localLife.ContentDao">
+	<sql id="table">
+		ll_content con
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.localLife.Content" >
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="typeId" property="typeId" />
+        <result column="cityId" property="cityId" />
+        <result column="developerName" property="developerName" />
+        <result column="provinceId" property="provinceId"/>
+        <result column="province_name" property="provinceName"/>
+        <result column="category" property="category" />
+        <result column="describe" property="describe" />
+        <result column="picUrl" property="picUrl" />
+        <result column="panoramaUrl" property="panoramaUrl" />
+        <result column="videoUrl" property="videoUrl" />
+        <result column="mark" property="mark" />
+        <result column="is_effective" property="isEffective" />
+        <result column="onlineType" property="onlineType" />
+        <result column="created_time" property="createdTime" />
+        <result column="created_by" property="createdBy" />
+        <result column="updated_time" property="updatedTime" />
+        <result column="updated_by" property="updatedBy" />
+        <result column="city_name" property="cityName" />
+        <result column="state" property="state" />
+        <result column="recommendId" property="recommendId" />
+        <result column="seq" property="labelSeq" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="name != null and name != ''">
+				and name like "%"#{name}"%"
+			</if>
+            <if test="typeId != null">
+                and con.typeId = #{typeId,jdbcType=INTEGER}
+            </if>
+            <if test="countryId != null and countryId !=''">
+                and con.countryId = #{countryId}
+            </if>
+            <if test="provinceId != null and provinceId != ''">
+                and con.provinceId = #{provinceId}
+            </if>
+            <if test="cityId != null and cityId != ''">
+                and con.cityId = #{cityId}
+            </if>
+            <if test="cityName != null and cityName != ''">
+                and con.city_name = #{cityName}
+            </if>
+            <if test="provinceName != null and provinceName != ''">
+                and province_name = #{provinceName}
+            </if>
+            <if test="userId != null">
+                <if test="zoneIDs != null and zoneIDs != '' ">
+                  and tzc.id in (#{zoneIDs,jdbcType=VARCHAR})
+                </if>
+            </if>
+            <if test="recommendExist == 0">
+                and con.id != (select case when contentId = null or contentId = '' then '' else contentId end  from ll_recommend where id = #{recommendId,jdbcType=INTEGER})
+            </if>
+            <if test="recommendExist == 1">
+                and con.id = (select case when contentId = null or contentId = '' then '' else contentId end  from ll_recommend where id = #{recommendId,jdbcType=INTEGER})
+            </if>
+            <if test="labelExist == 0">
+                and con.id not in
+                ( SELECT llc.contentId FROM ll_label l inner join ll_label_content llc on llc.labelId = l.id
+                where l.id = #{labelId,jdbcType=INTEGER} )
+            </if>
+            <if test="labelExist == 1">
+                and con.id in
+                ( SELECT llc.contentId FROM ll_label l inner join ll_label_content llc on llc.labelId = l.id
+                where l.id = #{labelId,jdbcType=INTEGER} )  and llc.labelId = #{labelId,jdbcType=INTEGER}
+            </if>
+		</where>
+	</sql>
+
+	<sql id="setAwardActivity">
+		<set>
+            <if test="name != '' and name != null">
+                name = #{name},
+            </if>
+            <if test="countryId != null">
+                countryId = #{countryId},
+            </if>
+            <if test="provinceId != null and provinceId != ''">
+                provinceId = #{provinceId},
+            </if>
+            <if test="provinceName != null and provinceName != ''">
+                province_name = #{provinceName},
+            </if>
+            <if test="cityId != null and  cityId != ''">
+                cityId = #{cityId},
+            </if>
+            <if test="cityName != null and  cityName != ''">
+                city_name = #{cityName},
+            </if>
+            <if test="typeId != null">
+                typeId = #{typeId},
+            </if>
+            <if test="developerName != null">
+                developerName = #{developerName},
+            </if>
+            <if test="category != null">
+                category = #{category},
+            </if>
+            <if test="describe != null">
+                `describe` = #{describe},
+            </if>
+            <if test="picUrl != null">
+                picUrl = #{picUrl},
+            </if>
+            <if test="panoramaUrl != null">
+                panoramaUrl = #{panoramaUrl},
+            </if>
+            <if test="videoUrl != null">
+                videoUrl = #{videoUrl},
+            </if>
+            <if test="mark != null">
+                mark = #{mark},
+            </if>
+            <if test="isEffective != null">
+                is_effective = #{isEffective},
+            </if>
+            <if test="onlineType != null">
+                onlineType = #{onlineType},
+            </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy},
+            </if>
+		</set>
+	</sql>
+	
+	<select id="getContentById"  resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		where con.id = #{id,jdbcType=INTEGER}
+	</select>
+
+	<select id="getBigger" resultType="Integer">
+		SELECT MIN(sequence) FROM
+		<include refid="table" />
+		where sequence &gt; #{sequence,jdbcType=INTEGER};
+	</select>
+	
+	<select id="getSmaller" resultType="Integer">
+		SELECT MAX(sequence) FROM
+		<include refid="table" />
+		where sequence &lt; #{sequence,jdbcType=INTEGER};
+	</select>
+	
+	<select id="getMaxSequence"  resultType="Integer">
+		SELECT MAX(sequence) FROM
+		<include refid="table" />
+	</select>
+
+	<select id="getList" parameterType="Content" resultMap="BaseResultMap">
+        SELECT id,name,countryId,provinceId,province_name,cityId,city_name,
+        typeId,developerName,category,picUrl,panoramaUrl,videoUrl,mark,`describe`,
+        is_effective,onlineType,created_time,created_by,updated_time,updated_by  FROM ll_content
+        <where>
+            <if test="name != null and  name != ''">
+                and name like "%"#{name}"%"
+            </if>
+            <if test="typeId != null and typeId  != ''">
+                and typeId = #{typeId}
+            </if>
+            <if test="provinceId != null and provinceId != ''">
+                and provinceId = #{provinceId}
+            </if>
+            <if test="cityId != null and cityId != ''">
+                and cityId = #{cityId}
+            </if>
+        </where>
+		order by created_time desc
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+    <select id="getContentByRecommendID" parameterType="Content" resultMap="BaseResultMap">
+        SELECT
+              con.id ,con.name,con.picUrl, con.city_name,con.typeId,con.is_effective as state,con.onlineType
+        FROM
+        ll_content con
+        <include refid="queryBywhere" />
+        order by con.created_time desc
+        <if test="skipNo != -1">
+            LIMIT #{skipNo},#{pageSize}
+        </if>
+    </select>
+    <select id="getCountByRecommendID" resultType="Integer">
+        SELECT COUNT(1) FROM
+        ll_content con
+        <include refid="queryBywhere" />
+    </select>
+    <select id="getContentByLabelID1" parameterType="Content" resultMap="BaseResultMap">
+        SELECT
+            con.id ,con.name,con.picUrl,con.city_name,con.typeId,con.is_effective as state,con.onlineType,llc.seq
+        FROM
+        ll_content con
+        left join ll_label_content llc on llc.contentId = con.id
+        <include refid="queryBywhere" />
+        order by llc.seq desc
+        <if test="skipNo != -1">
+            LIMIT #{skipNo},#{pageSize}
+        </if>
+    </select>
+
+<!--    <select id="getContentBylabe"  parameterType="Content" resultMap="BaseResultMap">
+         SELECT id,picUrl,city_name,city_name,is_effective,onlineType FROM ll_content
+         where 1=1
+        <if test="name != null">
+            and name like "%"#{name}"%"
+        </if>
+        <if test="typeId != null">
+            and con.typeId = #{typeId,jdbcType=INTEGER}
+        </if>
+        <if test="countryId != null">
+            and con.countryId = #{countryId}
+        </if>
+        <if test="provinceId != null">
+            and con.provinceId = #{provinceId}
+        </if>
+        <if test="cityId != null">
+            and con.cityId = #{cityId}
+        </if>
+    </select>-->
+
+    <select id="getCountByLabelID1" resultType="Integer">
+        SELECT COUNT(1) FROM
+        ll_content con
+        left join ll_label_content llc on llc.contentId = con.id
+        <include refid="queryBywhere" />
+    </select>
+
+    <select id="getContentByLabelID0" parameterType="Content" resultMap="BaseResultMap">
+        SELECT
+        con.id ,con.name,con.picUrl,con.city_name,con.typeId,con.is_effective as state,con.onlineType
+        FROM
+        ll_content con
+        <include refid="queryBywhere" />
+        order by con.created_time desc
+        <if test="skipNo != -1">
+            LIMIT #{skipNo},#{pageSize}
+        </if>
+    </select>
+    <select id="getCountByLabelID0" resultType="Integer">
+        SELECT COUNT(1) FROM
+        ll_content con
+        <include refid="queryBywhere" />
+    </select>
+	
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM ll_content
+        <where>
+            <if test="name != null and  name != ''">
+                and name like "%"#{name}"%"
+            </if>
+            <if test="typeId != null and typeId != ''">
+                and typeId = #{typeId}
+            </if>
+            <if test="provinceId != null and provinceId != ''">
+                and provinceId = #{provinceId}
+            </if>
+            <if test="cityId != null and cityId != ''">
+                and cityId = #{cityId}
+            </if>
+        </where>
+    </select>
+
+
+    
+   	<insert id="save" parameterType="Content" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO ll_content
+	  (`name`,countryId,provinceId,cityId,typeId,developerName,category,`describe`,picUrl,panoramaUrl,videoUrl,mark,is_effective,onlineType,created_by,updated_time,updated_by,province_name,city_name)
+	  VALUES
+	 (#{name},#{countryId},#{provinceId},#{cityId},#{typeId},#{developerName},#{category},#{describe},#{picUrl},#{panoramaUrl},#{videoUrl},#{mark},#{isEffective},#{onlineType},#{createdBy},#{updatedTime},#{updatedBy},#{provinceName},#{cityName});
+	 <selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID()
+	</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Content">
+		UPDATE <include refid="table"/>
+		<include refid="setAwardActivity"/>
+		WHERE con.id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="Content">
+	   DELETE FROM ll_content
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="getActivityById" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE id = #{id,jdbcType=INTEGER}
+	</select>
+</mapper>
