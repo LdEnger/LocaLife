@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.card.CardDao">
+	<sql id="table">
+		tb_card
+	</sql>
+	<sql id="column">
+		id,card_order_id,card_order_status,creator_name,user_name,card_from_hall,hall_name,card_from_branch,branch_name,activity_id,activity_name,card_number
+		,activation_code,status,DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') AS create_time,DATE_FORMAT(activation_time,'%Y-%m-%d %H:%i:%s') AS activation_time
+		,cancel_time,terminal_mac,terminal_sn,uid,devicecode,effective_time_length,update_time,del_status,city_id,effect_time,invalid_time,auto_active_time_length,is_auto_active
+		,user_num,order_num,source,phone
+	</sql>
+	
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.card.Card" >
+	<id column="id" property="id" />   
+	<result column="card_order_id" property="cardOrderId" />
+	<result column="card_order_status" property="cardOrderStatus" />
+	<result column="user_name" property="userName" />
+	<result column="creator_name" property="creatorName" />
+	<result column="card_from_hall" property="cardFromHall" />
+	<result column="card_from_branch" property="cardFromBranch" />
+	<result column="hall_name" property="hallName" />
+	<result column="branch_name" property="branchName" />
+	<result column="activity_id" property="activityId" />
+	<result column="activity_name" property="activityName" />
+	<result column="card_number" property="cardNumber" />
+	<result column="activation_code" property="activationCode" />
+	<result column="status" property="status" />
+	<result column="create_time" property="createTime" />
+	<result column="activation_time" property="activationTime" />
+	<result column="cancel_time" property="cancelTime" />
+	<result column="terminal_mac" property="terminalMac" />
+	<result column="terminal_sn" property="terminalSn" />
+	<result column="uid" property="uid" />
+	<result column="devicecode" property="devicecode" />
+	<result column="effective_time_length" property="effectiveTimeLength" />
+	<result column="update_time" property="updateTime" />
+	<result column="del_status" property="delStatus" />
+	<result column="city_id" property="cityId" />
+	<result column="effect_time" property="effectTime" />
+	<result column="invalid_time" property="invalidTime" />
+	<result column="auto_active_time_length" property="autoActiveTimeLength" />
+	<result column="is_auto_active" property="isAutoActive" />
+	<result column="user_num" property="userNum" />
+	<result column="order_num" property="orderNum" />
+	<result column="source" property="source" />
+	<result column="phone" property="phone" />
+	<result column="versions" property="versions" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="1==1">
+				and del_status = 0
+			</if>
+			<if test="status !=null">
+				and status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="activityId !=null">
+				and activity_id = #{activityId,jdbcType=INTEGER}
+			</if>
+			<if test="cardFromBranch !=null">
+				and card_from_branch = #{cardFromBranch,jdbcType=INTEGER}
+			</if>
+			<if test="cardFromHall !=null">
+				and card_from_hall = #{cardFromHall,jdbcType=INTEGER}
+			</if>
+			<if test="createTime !=null  &amp;&amp; createTime!=''">
+				and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[>=]]>  #{createTime,jdbcType=INTEGER}
+			</if>
+			<if test="createStopTime !=null &amp;&amp; createStopTime!=''">
+				and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[<=]]>  #{createStopTime,jdbcType=INTEGER}
+			</if>
+			<if test="activationTime !=null &amp;&amp; activationTime!=''">
+				and DATE_FORMAT(activation_time,'%Y-%m-%d') <![CDATA[>=]]>  #{activationTime,jdbcType=INTEGER}
+			</if>
+			<if test="activationStopTime !=null &amp;&amp; activationStopTime!=''">
+				and DATE_FORMAT(activation_time,'%Y-%m-%d') <![CDATA[<=]]>  #{activationStopTime,jdbcType=INTEGER}
+			</if>
+			<if test="uid !=null &amp;&amp; uid!=''">
+				and uid = #{uid,jdbcType=INTEGER}
+			</if>
+			<if test="activationCode !=null &amp;&amp; activationCode!=''">
+				and activation_code like  CONCAT ('%',#{activationCode,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="terminalMac !=null &amp;&amp; terminalMac !=''">
+				and terminal_mac  like CONCAT ('%',#{terminalMac,jdbcType=VARCHAR},'%') 
+			</if>
+			<if test="cityId !=null">
+				and city_id = #{cityId,jdbcType=INTEGER}
+			</if>
+			<!-- 自动失效时长等于0时，认定为不需要自动失效 -->
+			<if test="autoActiveTimeLength !=null &amp;&amp; autoActiveTimeLength !=''">
+				and auto_active_time_length <![CDATA[>]]> 0
+			</if>
+			<if test="userNum !=null &amp;&amp; userNum !=''">
+				and user_num  = #{userNum,jdbcType=VARCHAR}
+			</if>
+			<if test="orderNum !=null &amp;&amp; orderNum !=''">
+				and order_num  = #{orderNum,jdbcType=VARCHAR}
+			</if>
+			<if test="cardNumber !=null &amp;&amp; cardNumber !=''">
+				and card_number  = #{cardNumber,jdbcType=VARCHAR}
+			</if>
+			<if test="source !=null &amp;&amp; source !=''">
+				and source  = #{source,jdbcType=INTEGER}
+			</if>
+			<if test="cardType!=null and cardType!=''">
+				and card_Type =#{cardType}
+			</if>
+			<if test="citys!=null and citys!=''">
+				and city_id IN (#{citys})
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="setCard">
+		<set>
+		<if test="delStatus != null">
+			del_status = #{delStatus,jdbcType=INTEGER},
+		</if>
+		<if test="cardOrderId != null">
+			card_order_id = #{cardOrderId,jdbcType=VARCHAR},
+		</if>
+		<if test="cardOrderStatus != null">
+			card_order_status = #{cardOrderStatus,jdbcType=INTEGER},
+		</if>
+		<if test="terminalMac !=null &amp;&amp; terminalMac !=''">
+			terminal_mac = #{terminalMac,jdbcType=VARCHAR},
+		</if>
+		<if test="terminalSn !=null &amp;&amp; terminalSn !=''">
+			terminal_sn  = #{terminalSn,jdbcType=VARCHAR},
+		</if>
+		<if test="userName !=null &amp;&amp; userName !=''">
+			 user_name = #{userName,jdbcType=VARCHAR},
+		</if>
+		<if test="uid !=null &amp;&amp; uid !=''">
+			 uid = #{uid,jdbcType=INTEGER},
+		</if>
+		<if test="devicecode !=null &amp;&amp; devicecode !=''">
+			devicecode = #{devicecode,jdbcType=VARCHAR},
+		</if>
+		<if test="status != null">
+			<if test="2==status">
+				activation_time = now(),
+			</if>
+			<if test="4==status">
+				cancel_time = now(),
+			</if>
+			status = #{status,jdbcType=INTEGER},
+		</if>
+		<if test="effectTime !=null &amp;&amp; effectTime !=''">
+			effect_time = #{effectTime,jdbcType=VARCHAR},
+		</if>
+		<if test="invalidTime !=null &amp;&amp; invalidTime !=''">
+			invalid_time = #{invalidTime,jdbcType=VARCHAR},
+		</if>
+		<if test="isAutoActive !=null &amp;&amp; isAutoActive !=''">
+			 is_auto_active = #{isAutoActive,jdbcType=INTEGER},
+		</if>
+		<if test="autoActiveTimeLength !=null &amp;&amp; autoActiveTimeLength !=''">
+			 auto_active_time_length = #{autoActiveTimeLength,jdbcType=INTEGER},
+		</if>
+		<if test="userNum !=null &amp;&amp; userNum !=''">
+			user_num = #{userNum,jdbcType=VARCHAR},
+		</if>
+		<if test="orderNum !=null &amp;&amp; orderNum !=''">
+			order_num = #{orderNum,jdbcType=VARCHAR},
+		</if>
+		<if test="source !=null &amp;&amp; source !=''">
+			source = #{source,jdbcType=INTEGER},
+		</if>
+			update_time = now()
+		</set>
+	</sql>
+	
+	<select id="get" parameterType="com.hiveview.entity.card.Card" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+	
+	<select id="getCardByActivityCode" parameterType="String" resultMap="BaseResultMap">
+		SELECT *  FROM
+		<include refid="table" />
+		WHERE activation_code = #{activationCode} AND del_status = 0
+	</select>
+	
+	<select id="getCardByOrderNum" parameterType="String" resultMap="BaseResultMap">
+		SELECT *  FROM
+		<include refid="table" />
+		WHERE order_num = #{orderNum} AND del_status = 0
+	</select>
+	
+	<select id="getList" parameterType="com.hiveview.entity.card.Card" resultMap="BaseResultMap">
+		SELECT <include refid="column" /> FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+		ORDER BY id DESC
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+	<select id="getCardList"  resultMap="BaseResultMap">
+		SELECT <include refid="column" /> FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+		ORDER BY id DESC
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+	<select id="getCardByList"  resultMap="BaseResultMap">
+		SELECT <include refid="column" /> 
+		FROM <include refid="table" />
+		WHERE  city_id IN 		
+		<foreach item="item" collection="list" separator="," open="(" close=")" index="">
+    		  #{item.cityId, jdbcType=INTEGER}
+   		 </foreach> 
+  		AND del_status = 0
+  		and card_Type =#{cardType}
+  		ORDER BY id DESC
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  <include refid="table" />
+        <include refid="queryBywhere" />
+    </select>
+    
+     <select id="getCountByList" resultType="Integer">
+        SELECT COUNT(1) FROM  <include refid="table" />
+       	WHERE city_id IN 		
+       	<foreach item="item" collection="list" separator="," open="(" close=")" index="">
+    		  #{item.cityId, jdbcType=INTEGER}
+   		 </foreach>  
+  		AND del_status = 0
+    </select>
+    
+   	<insert id="save" parameterType="com.hiveview.entity.card.Card" useGeneratedKeys="true">
+	  INSERT INTO <include refid="table" /> 
+	  (uid,user_name,creator_name,card_from_hall,card_from_branch,hall_name,branch_name,activity_id,activity_name,activation_code,create_time,terminal_mac,terminal_sn,effective_time_length,update_time,city_id,auto_active_time_length,user_num,order_num,source,card_number,phone,card_type) 
+	  VALUES
+	  (#{uid},#{userName},#{creatorName},#{cardFromHall},#{cardFromBranch},#{hallName},#{branchName},#{activityId},#{activityName},#{activationCode},now(),#{terminalMac},#{terminalSn},#{effectiveTimeLength},now(),#{cityId},#{autoActiveTimeLength},#{userNum},#{orderNum},#{source},#{cardNumber},#{phone},#{cardType});
+	</insert>
+	
+	<update id="update" parameterType="com.hiveview.entity.card.Card">
+		UPDATE <include refid="table"/>
+		<include refid="setCard"/>
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+	   DELETE FROM <include refid="table"/>
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="getUnsucOrderList"  resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE card_order_status=0 AND del_status = 0 AND card_order_id IS NOT NULL
+	</select>
+	
+	<update id="changeOrderStatus" parameterType="String">
+		UPDATE <include refid="table"/>
+		SET card_order_status = 2
+		WHERE card_order_id=#{card_order_id,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getRepeatCard"  parameterType="com.hiveview.entity.card.Card" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE terminal_mac = #{terminalMac} AND terminal_sn  = #{terminalSn} AND activity_id = #{activityId} AND status = 2 AND del_status = 0
+	</select>
+	
+	<update id="cardExpired" parameterType="String">
+		UPDATE <include refid="table"/>
+		SET status = 5
+		WHERE id=#{id}
+	</update>
+	
+	<select id="getNonactivatedCard"  parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE status = 1 AND del_status = 0 AND activity_id=#{activityId}
+	</select>
+	
+	<select id="getCardById"  parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE del_status = 0 AND id=#{id}
+	</select>
+	
+	<select id="getCardByOrderId"  parameterType="String" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE card_order_id = #{cardOrderId}
+	</select>
+	
+	<select id="getAgioConvertActivity" resultType="com.hiveview.entity.activity.Activity">
+		select id,packageName as activityName from tb_agio_package
+		<where>
+			<if test="roleId==1"><!-- 集团用户 -->
+				<!-- 查全部 -->
+			</if>
+			<if test="roleId==4"><!-- 战区用户 -->
+				and zoneId =#{zoneId}
+			</if>
+			<if test="roleId==2"><!-- 分公司用户 -->
+				and branchId =#{branchId}
+			</if>
+			and state=1
+		</where>
+	</select>
+	<!--########################################## 统计专用####################################### -->
+	<sql id="countBywhere">
+		<where>
+			<if test="cardFromBranch !=null">
+				and card_from_branch = #{cardFromBranch,jdbcType=INTEGER}
+			</if>
+			<if test = "queryMethod ==1">
+				<if test="createTime !=null">
+					and activation_time <![CDATA[>=]]> #{createTime,jdbcType=INTEGER}
+				</if>
+				<if test="activationTime !=null">
+					and activation_time <![CDATA[<=]]> #{activationTime,jdbcType=INTEGER}
+				</if>
+				and status = 2
+			</if>
+			<if test = "queryMethod ==2">
+				<if test="createTime !=null">
+					and effect_time <![CDATA[>=]]> #{createTime,jdbcType=INTEGER}
+				</if>
+				<if test="activationTime !=null">
+					and effect_time <![CDATA[<=]]> #{activationTime,jdbcType=INTEGER}
+				</if>
+				and status = 2
+			</if>
+			<if test = "queryMethod ==3">
+				<if test="createTime !=null">
+					and create_time <![CDATA[>=]]> #{createTime,jdbcType=INTEGER}
+				</if>
+				<if test="activationTime !=null">
+					and create_time <![CDATA[<=]]> #{activationTime,jdbcType=INTEGER}
+				</if>
+				<!--卡状态，1：未激活 2：已激活 3:激活失败 4：已注销 5：已过期  -->
+				and status <![CDATA[<]]> 4
+			</if>
+			and del_status = 0 and card_type ='vip'
+			<choose>
+				<when test="delStatus==1">
+					and (select duration from tb_activity where tb_activity.id = activity_id)/86400 <![CDATA[>]]> 360
+				</when>
+				<when test="delStatus==2">
+					and (select duration from tb_activity where tb_activity.id = activity_id)/86400 <![CDATA[<=]]> 360
+					and (select duration from tb_activity where tb_activity.id = activity_id)/86400 <![CDATA[>]]> 100
+				</when>
+			</choose>
+			
+			<if test="activityId!=-1">
+				and activity_id in (SELECT DISTINCT id FROM tb_activity  WHERE product_id =#{activityId})
+			</if>
+			
+		</where>
+	</sql>
+
+	<select id="getCountInfo" parameterType="com.hiveview.entity.card.Card" resultType="com.hiveview.entity.count.CountRecord">
+		SELECT count(1) AS total, card_from_branch AS branchId, branch_name AS branchName
+		 FROM
+		<include refid="table" />
+		<include refid="countBywhere" />
+		GROUP BY card_from_branch
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+	<select id="getCountTotal" parameterType="com.hiveview.entity.card.Card" resultType="Integer">
+<!-- 			SELECT COUNT(1)  FROM
+		<include refid="table" />
+		<include refid="countBywhere" /> -->
+		SELECT COUNT(1)  FROM
+		(
+		SELECT COUNT(1) FROM 
+		<include refid="table" /> 
+		<include refid="countBywhere" />
+		GROUP BY card_from_branch
+		)
+		 AS new_tb
+	</select>
+	
+	<select id="getLikeBossReport" resultType="com.hiveview.entity.card.BossOrderNew">
+		SELECT 
+		  COUNT(c.branchId) AS excelId,
+		  c.branchId AS branchId,
+		  c.productId AS activityId 
+		FROM
+		  (
+		  SELECT 
+		    a.card_from_branch AS branchId,
+		    b.product_id AS productId,
+		    b.product_name AS productName 
+		  FROM
+		    tb_card a 
+		    LEFT JOIN tb_activity b 
+		      ON a.activity_Id = b.id 
+		  WHERE a.create_time  &gt; #{start}  
+		    AND  #{end} &gt; a.create_time and a.status <![CDATA[<]]> 4
+		    and del_status = 0 and card_type ='vip'
+		    ) c 
+		GROUP BY c.branchId,
+		  c.productId
+    </select>
+    <select id="getTotalTxt" resultType="java.lang.Integer">
+    	SELECT COUNT(*) AS total FROM tb_newBoss_order UNION
+		SELECT COUNT(*) AS total FROM tb_newBoss_order WHERE LENGTH(mac)=12 AND LENGTH(sn)=17 UNION
+		SELECT COUNT(DISTINCT sn) AS total FROM tb_newBoss_order  WHERE LENGTH(mac)=12 AND LENGTH(sn)=17;
+    	
+    </select>
+	<!--########################################## 统计专用####################################### -->
+	
+	<!--###################################### 给财务系统提供接口################################### -->
+	<sql id="detailColumn">
+		id,card_order_id AS cardOrderId,card_order_status AS cardOrderStatus,creator_name AS creatorName,user_name AS userName,card_from_hall AS cardFromHall,hall_name AS hallName,card_from_branch AS cardFromBranch,branch_name AS branchName,activity_id AS activityId,activity_name AS activityName,
+		activation_code AS activationCode,status,DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') AS createTime,DATE_FORMAT(activation_time,'%Y-%m-%d %H:%i:%s') AS activationTime,
+		DATE_FORMAT(cancel_time,'%Y-%m-%d %H:%i:%s') AS cancelTime,terminal_mac AS terminalMac,terminal_sn AS terminalSn,uid,devicecode,effective_time_length/86400 AS effectiveTimeLength,update_time AS updateTime,city_id AS cityId,effect_time AS effectTime,invalid_time AS invalidTime,user_num AS userNum,order_num AS orderNum,
+		auto_active_time_length as autoActiveTimeLength
+	</sql>
+	
+	<sql id="getDetailBywhere">
+		<where>
+			<if test="cardFromBranch !=null">
+				and card_from_branch = #{cardFromBranch,jdbcType=INTEGER}
+			</if>
+			<if test = "queryMethod ==1">
+				<if test="activationTime !=null">
+					and activation_time <![CDATA[>=]]> #{activationTime,jdbcType=VARCHAR}
+				</if>
+				<if test="activationStopTime !=null">
+					and activation_time <![CDATA[<=]]> #{activationStopTime,jdbcType=VARCHAR}
+				</if>
+			</if>
+			<if test = "queryMethod ==3">
+				<if test="activationTime !=null">
+					and cancel_time <![CDATA[>=]]> #{activationTime,jdbcType=VARCHAR}
+				</if>
+				<if test="activationStopTime !=null">
+					and cancel_time <![CDATA[<=]]> #{activationStopTime,jdbcType=VARCHAR}
+				</if>
+			</if>
+			<if test = "queryMethod ==4">
+				<if test="activationTime !=null">
+					and create_time <![CDATA[>=]]> #{activationTime,jdbcType=VARCHAR}
+				</if>
+				<if test="activationStopTime !=null">
+					and create_time <![CDATA[<=]]> #{activationStopTime,jdbcType=VARCHAR}
+				</if>
+			</if>
+			and card_type ='vip'  
+			<if test="skipNo != -1">
+				LIMIT #{skipNo},#{pageSize}
+			</if>
+		</where>
+	</sql>
+	
+	<select id="getCardListInfo" parameterType="com.hiveview.entity.card.Card" resultType="com.hiveview.entity.card.Card">
+		SELECT 
+		<include refid="detailColumn" />,(select price from tb_activity where tb_activity.id = activity_id) AS price,
+		(select activity_type from tb_activity where tb_activity.id = activity_id) AS activityType,
+		(select product_id from tb_activity where tb_activity.id = activity_id) AS productId,
+		(select product_name from tb_activity where tb_activity.id = activity_id) AS productName
+		FROM
+		<include refid="table" />
+		<include refid="getDetailBywhere" />
+	</select>
+	
+	<select id="getIncomeInfo" parameterType="com.hiveview.entity.card.Card" resultType="com.hiveview.entity.count.IncomeRecord">
+		SELECT card_from_branch AS branchId,branch_name AS branchName, count(1) AS total,sum((select price from tb_activity where tb_activity.id = activity_id)) AS income
+		FROM
+		<include refid="table" />
+		<include refid="getDetailBywhere" />
+		GROUP BY card_from_branch
+	</select>
+	<!--###################################### 给财务系统提供接口################################### -->
+	
+</mapper>

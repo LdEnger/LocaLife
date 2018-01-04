@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.discount.DiscountDao">
+	<sql id="table">
+		tb_discount
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.discount.Discount" >
+	<id column="id" property="id" />   
+	<result column="discount_name" property="discountName" />
+	<result column="discount_amount" property="discountAmount" />
+	<result column="recharge_amount" property="rechargeAmount" />
+	<result column="img_url" property="imgUrl" />
+	<result column="is_effective" property="isEffective" />
+	<result column="recharge_id" property="rechargeId" />
+	<result column="update_time" property="updateTime" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			1=1
+		</where>
+	</sql>
+	
+	<sql id="setDiscount">
+		<set>
+		<if test="discountName != null">
+			discount_name = #{discountName,jdbcType=VARCHAR},
+		</if>
+		<if test="discountAmount != null">
+			discount_amount = #{discountAmount,jdbcType=INTEGER},
+		</if>
+		<if test="imgUrl != null">
+			img_url = #{imgUrl,jdbcType=VARCHAR},
+		</if>
+		<if test="isEffective != null">
+			is_effective = #{isEffective,jdbcType=INTEGER},
+		</if>
+		<if test="rechargeAmount != null">
+			recharge_amount = #{rechargeAmount,jdbcType=INTEGER},
+		</if>
+		<if test="rechargeId != null">
+			recharge_id = #{rechargeId,jdbcType=INTEGER},
+		</if>
+			update_time = now()
+		</set>
+	</sql>
+	
+	<select id="getList" parameterType="com.hiveview.entity.discount.Discount" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  
+        <include refid="table" />
+        <include refid="queryBywhere" />
+    </select>
+    
+   	<insert id="save" parameterType="com.hiveview.entity.discount.Discount" useGeneratedKeys="true">
+	  INSERT INTO <include refid="table" /> 
+	  (discount_name,discount_amount,recharge_amount,img_url,is_effective,recharge_id,update_time) 
+	  VALUES
+	  (#{discountName},#{discountAmount},#{rechargeAmount},#{imgUrl},#{isEffective},#{rechargeId},now());
+	</insert>
+	
+	<update id="update" parameterType="com.hiveview.entity.discount.Discount">
+		UPDATE 
+		<include refid="table"/>
+		<include refid="setDiscount"/>
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="com.hiveview.entity.discount.Discount">
+	   DELETE FROM 
+	   <include refid="table"/>
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+</mapper>

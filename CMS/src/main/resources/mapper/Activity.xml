@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.activity.ActivityDao">
+	<sql id="table">
+		tb_activity
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.activity.Activity" >
+	<id column="id" property="id" />   
+	<result column="activity_name" property="activityName" />
+	<result column="duration" property="duration" />
+	<result column="price" property="price" />
+	<result column="product_id" property="productId" />
+	<result column="product_name" property="productName" />
+	<result column="effective_time" property="effectiveTime" />
+	<result column="status" property="status" />
+	<result column="operator_id" property="operatorId" />
+	<result column="operator_name" property="operatorName" />
+	<result column="operator_role_id" property="operatorRoleId" />
+	<result column="operator_role" property="operatorRole" />
+	<result column="remark" property="remark" />
+	<result column="insert_time" property="insertTime" />
+	<result column="update_time" property="updateTime" />
+	<result column="charging_id" property="chargingId" />
+	<result column="charging_name" property="chargingName" />
+	<result column="charging_pic" property="chargingPic" />
+	<result column="is_effective" property="isEffective" />
+	<result column="branch_id" property="branchId" />
+	<result column="hall_id" property="hallId" />
+	<result column="hall_name" property="hallName" />
+	<result column="branch_name" property="branchName" />
+	<result column="city_id" property="cityId" />
+	<result column="activity_type" property="activityType" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="operatorRoleId != null ">
+				and operator_role_id = #{operatorRoleId,jdbcType=INTEGER} 
+			</if>
+			<if test="id != null ">
+				and id = #{id,jdbcType=INTEGER} 
+			</if>
+			<if test="status != null">
+				and status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="branchId != null">
+				and branch_id = #{branchId,jdbcType=INTEGER}
+			</if>
+			<if test="hallId != null">
+				and hall_id = #{hallId,jdbcType=INTEGER}
+			</if>
+			<if test="activityName != null &amp;&amp; activityName!=''">
+				and activity_name like CONCAT ('%',#{activityName,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="cityId != null ">
+				and city_id = #{cityId,jdbcType=INTEGER} 
+			</if>
+			<if test="activityType != null ">
+				and activity_type = #{activityType,jdbcType=INTEGER} 
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="setActivity">
+		<set>
+		<if test="activityName != null">
+			activity_name = #{activityName,jdbcType=VARCHAR},
+		</if>
+		<if test="duration != null">
+			duration = #{duration,jdbcType=INTEGER},
+		</if>
+		<if test="price != null">
+			price = #{price,jdbcType=INTEGER},
+		</if>
+		<if test="effectiveTime != null">
+			effective_time = #{effectiveTime,jdbcType=INTEGER},
+		</if>
+		<if test="chargingPic != null">
+			charging_pic = #{chargingPic,jdbcType=VARCHAR},
+		</if>
+		<if test="productId != null">
+			product_id = #{productId,jdbcType=INTEGER},
+		</if>
+		<if test="productName != null">
+			product_name = #{productName,jdbcType=VARCHAR},
+		</if>
+		<if test="status != null">
+			status = #{status,jdbcType=INTEGER},
+		</if>
+		<if test="operatorId != null">
+			operator_id = #{operatorId,jdbcType=INTEGER},
+		</if>
+		<if test="operatorName != null">
+			operator_name = #{operatorName,jdbcType=VARCHAR},
+		</if>
+		<if test="operatorRoleId != null">
+			operator_role_id = #{operatorRoleId,jdbcType=INTEGER},
+		</if>
+		<if test="operatorRole != null">
+			operator_role = #{operatorRole,jdbcType=VARCHAR},
+		</if>
+		<if test="remark != null">
+			remark = #{remark,jdbcType=VARCHAR},
+		</if>
+		<if test="operatorName != null">
+			operator_name = #{operatorName,jdbcType=VARCHAR},
+		</if>
+		<if test="chargingId != null">
+			charging_id = #{chargingId,jdbcType=INTEGER},
+		</if>
+		<if test="chargingName != null">
+			charging_name = #{chargingName,jdbcType=VARCHAR},
+		</if>
+		<if test="isEffective != null">
+			is_effective = #{isEffective,jdbcType=INTEGER},
+		</if>
+		<if test="branchId != null">
+			branch_id = #{branchId,jdbcType=INTEGER},
+		</if>
+		<if test="hallId != null">
+			hall_id = #{hallId,jdbcType=INTEGER},
+		</if>
+		<if test="branchName != null">
+			branch_name = #{branchName,jdbcType=VARCHAR},
+		</if>
+		<if test="hallName != null">
+			hall_name = #{hallName,jdbcType=VARCHAR},
+		</if>
+		<if test="activityType != null">
+			activity_type = #{activityType,jdbcType=INTEGER},
+		</if>
+			update_time = now()
+		</set>
+	</sql>
+	
+	<select id="get" parameterType="com.hiveview.entity.activity.Activity" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+	
+	
+	<select id="getList" parameterType="com.hiveview.entity.activity.Activity" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+		ORDER BY id DESC
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+	<select id="getAllList" parameterType="com.hiveview.entity.activity.Activity" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE status = 1 AND is_effective=1
+	</select>
+	
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  <include refid="table" />
+        <include refid="queryBywhere" />
+    </select>
+    
+   	<insert id="save" parameterType="com.hiveview.entity.activity.Activity" useGeneratedKeys="true">
+	  INSERT INTO <include refid="table" /> 
+	  (activity_name,charging_id,charging_name,duration,price,charging_pic,product_id,product_name,effective_time,status,operator_id,operator_name,operator_role_id,operator_role,remark,branch_id,branch_name,hall_id,hall_name,insert_time,update_time,city_id,activity_type) 
+	  VALUES
+	  (#{activityName},#{chargingId},#{chargingName},#{duration},#{price},#{chargingPic},#{productId},#{productName},#{effectiveTime},#{status},#{operatorId},#{operatorName},#{operatorRoleId},#{operatorRole},#{remark},#{branchId},#{branchName},#{hallId},#{hallName},now(),now(),#{cityId},#{activityType});
+	</insert>
+	
+	<update id="update" parameterType="com.hiveview.entity.activity.Activity">
+		UPDATE <include refid="table"/>
+		<include refid="setActivity"/>
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="com.hiveview.entity.activity.Activity">
+	   DELETE FROM <include refid="table"/>
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="getActivityById" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE id = #{activityId,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getEffectiveActivity" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE is_effective=1
+	</select>
+	<!-- for ex  floor-->
+	<insert  id="saveActivityEx" parameterType="com.hiveview.entity.activity.ActivityEx" useGeneratedKeys="true">
+		insert into tb_activity_ex (productName, chargingId, chargingName, chargingDuration, chargingPrice, chargingPic, productCycle, productFreeDay, productDay, flag)
+ 		values(#{productName},#{chargingId},#{chargingName},#{chargingDuration},#{chargingPrice},#{chargingPic},#{productCycle},#{productFreeDay},#{productDay},#{flag})
+	</insert>
+	
+	<update id="updateActivityEx" parameterType="com.hiveview.entity.activity.ActivityEx">
+		update tb_activity_ex
+		<set>
+			flag =#{flag}
+		</set>
+		where productId =#{productId}
+	</update>
+	<sql id="queryActivityWhere">
+		<if test="productName!=null and productName!=''">
+			and productName =#{productName}
+		</if>
+	</sql>
+	<select id="getActivityExList" parameterType="com.hiveview.entity.activity.ActivityEx" resultType="com.hiveview.entity.activity.ActivityEx">
+		select * from tb_activity_ex where 1=1 
+		<include refid="queryActivityWhere"></include>
+		order by flag DESC,ctime DESC
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+	<select id="countActivityEx" parameterType="com.hiveview.entity.activity.ActivityEx" resultType="Integer">
+		select count(*) from tb_activity_ex where 1=1 
+		<include refid="queryActivityWhere"></include>
+	</select>
+</mapper>

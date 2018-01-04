@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.sms.SmsDao">
+	<sql id="queryBywhereForRecord">
+		<where>
+			<if test="sender!=null and sender!=''">
+				and sender =#{sender}
+			</if>
+			<if test="branchName!=null and branchName!='' and branchName!='-1'">
+				and branchId in (#{branchName})
+			</if>
+		
+		</where>
+	</sql>
+	<select id="getList" parameterType="com.hiveview.entity.sms.SmsRecord" resultType="com.hiveview.entity.sms.SmsRecord">
+		SELECT * FROM tb_sms_record
+		<include refid="queryBywhereForRecord" />
+		ORDER BY id DESC
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  tb_sms_record
+        <include refid="queryBywhereForRecord" />
+    </select>
+    
+   	<insert id="save" parameterType="com.hiveview.entity.sms.SmsRecord" useGeneratedKeys="true">
+	  insert into tb_sms_record 
+(sender, phone, branchId, branchName, activityId, activityName, activityCode, state, smsTemplet) 
+values
+(#{sender},#{phone},#{branchId},#{branchName},#{activityId},#{activityName},#{activityCode},#{state},#{smsTemplet})
+	</insert>
+	
+	<insert id="addSender" parameterType="com.hiveview.entity.sms.SmsSender" useGeneratedKeys="true">
+		insert into tb_sms_sender (sender, user, pwd, md5, branchId, initSmsConf, signature,updateBy) 
+		values(#{sender},#{user},#{pwd},#{md5},#{branchId},#{initSmsConf},#{signature},#{updateBy})	
+	</insert>
+	<insert id="addConf" parameterType="com.hiveview.entity.sms.SmsConf">
+	insert into tb_sms_conf (branchId, state, text1, text2, text3, args2, args1,updateBy)
+	 values(#{branchId},#{state},#{text1},#{text2},#{text3},#{args2},#{args1},#{updateBy})
+	</insert>
+	
+	<update id="updateSender" parameterType="com.hiveview.entity.sms.SmsSender">
+	update tb_sms_sender set id =#{id},
+	<if test="user!=null and user!=''">
+		user =#{user},
+	</if>
+	<if test="pwd!=null and pwd!=''">
+		pwd=#{pwd},md5=#{md5},
+	</if>
+	<if test="signature!=null and signature!=''">
+		signature=#{signature},
+	</if>
+	<if test="initSmsConf!=null">
+		initSmsConf=#{initSmsConf},
+	</if>
+	updateBy =#{updateBy} where id =#{id}
+	</update>
+	<update id="updateConf" parameterType="com.hiveview.entity.sms.SmsConf">
+	  update tb_sms_conf set id =#{id},
+	  	state=#{state},
+	  <if test="text1!=null and text1!=''">
+	  	text1=#{text1},
+	  </if>
+	  <if test="text2!=null and text2!=''">
+	  	text2=#{text2},
+	  </if>
+	  <if test="text3!=null and text3!=''">
+	  	text3=#{text3},
+	  </if>
+	  <if test="args2!=null and args2!=''">
+	  	args2=#{args2},
+	  </if>
+	  <if test="args1!=null and args1!=''">
+	  	args1=#{args1},
+	  </if>
+	  updateBy =#{updateBy}
+	  where id =#{id}
+	</update>
+	<sql id="queryBywhereForConf">
+		<where>
+			<if test="text1!=null and text1!='' and text1!='-1'">
+					and branchId in (#{text1})
+			</if>
+		</where>
+	</sql>
+	<select id="getConfCount" resultType="Integer">
+		 SELECT COUNT(1) FROM  tb_sms_conf
+        <include refid="queryBywhereForConf" />
+	</select>
+	
+	<select id="getConfList" parameterType="com.hiveview.entity.sms.SmsConf" resultType="com.hiveview.entity.sms.SmsConf">
+		select * from tb_sms_conf <include refid="queryBywhereForConf" />
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+	<sql id="querySmsSender">
+		<where>
+			<if test="branchId!=-1">
+				and branchId=#{branchId}
+			</if>
+		</where>
+	</sql>
+	<select id="countSender" resultType="Integer">
+		SELECT COUNT(1) FROM  tb_sms_conf
+        <include refid="querySmsSender" />
+	</select>
+	<select id="getSenderList" parameterType="com.hiveview.entity.sms.SmsSender" resultType="com.hiveview.entity.sms.SmsSender">
+		select * from tb_sms_sender   <include refid="querySmsSender" />
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+</mapper>

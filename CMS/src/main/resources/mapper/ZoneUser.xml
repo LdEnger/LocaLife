@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.localLife.ZoneUserDao">
+	<sql id="table">
+		tb_zone_tree tzt
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.localLife.ZoneUser" >
+        <id column="id" property="id" />
+        <result column="userId" property="userId" />
+        <result column="zoneId" property="zoneId" />
+	</resultMap>
+	
+	<sql id="queryBywhere">
+		<where>
+			<if test="userId != null ">
+				and userId = #{userId,jdbcType=INTEGER}
+			</if>
+        </where>
+	</sql>
+
+    <select id="getZoneByUserId"  parameterType="Integer" resultMap="BaseResultMap">
+        SELECT * FROM
+        tb_zone_tree
+        WHERE user_id = #{userId}
+    </select>
+
+   	<insert id="save" parameterType="com.hiveview.entity.localLife.ZoneUser" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO tb_zone_user
+	  (user_id,zone_id)
+	  VALUES
+	  (#{userId},#{zoneId});
+	</insert>
+    <delete id="deleteByUserID" parameterType="INTEGER">
+  		DELETE FROM tb_zone_user WHERE user_id = #{userId}
+    </delete>
+
+	<select id="getZone"  parameterType="Integer" resultType="com.hiveview.entity.sys.ZoneCity">
+		SELECT distinct tzt.id cityId,tzt.str cityName
+        FROM tb_zone_tree tzt left join tb_zone_user tzu on tzu.zone_Id = tzt.id
+		WHERE tzu.user_id = #{userId}
+	</select>
+
+</mapper>

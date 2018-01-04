@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.award.AwardDao">
+	<sql id="table">
+		t_award_detail
+	</sql>
+	<insert id="save" parameterType="com.hiveview.entity.po.award.Award" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO <include refid="table" />
+		(activity_id,id,award_type,award_name,award_pic_url,award_icon_url,award_desc,available_begin_time,available_end_time,award_amount,award_current_amount,win_limit_day,award_code_type,award_property,award_qrcode_flag,user_info_type,award_vip_duration,award_video_id,award_video_partner_id,award_price,award_dis_vip_duration,award_video_name,award_ml_amount,award_video_type,award_discount,award_pay_url)
+		values
+		(#{activityId},#{id},#{awardType},#{awardName},#{awardPicUrl},#{awardIconUrl},#{awardDesc},#{availableBeginTime},#{availableEndTime},#{awardAmount},#{awardCurrentAmount},#{winLimitDay},#{awardCodeType},#{awardProperty},#{awardQrcodeFlag},#{userInfoType},#{awardVipDuration},#{awardVideoId},#{awardVideoPartnerId},#{awardPrice},#{awardDisVipDuration},#{awardVideoName},#{awardMlAmount},#{awardVideoType},#{awardDiscount},#{awardPayUrl})
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<sql id="setAward">
+		<set>
+			<if test="awardType != null">
+				award_type = #{awardType,jdbcType=VARCHAR},
+			</if>
+			<if test="awardName != null">
+				award_name = #{awardName,jdbcType=VARCHAR},
+			</if>
+			<if test="awardPicUrl != null">
+				award_pic_url = #{awardPicUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="awardIconUrl != null">
+				award_icon_url = #{awardIconUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="awardDesc != null">
+				award_desc = #{awardDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="availableBeginTime != null">
+				available_begin_time = #{availableBeginTime},
+			</if>
+			<if test="availableEndTime != null">
+				available_end_time = #{availableEndTime},
+			</if>
+			<if test="awardAmount != null">
+				award_amount = #{awardAmount,jdbcType=INTEGER},
+			</if>
+			<if test="awardCurrentAmount != null">
+				award_current_amount = #{awardCurrentAmount,jdbcType=INTEGER},
+			</if>
+			<if test="winLimitDay != null">
+				win_limit_day = #{winLimitDay,jdbcType=INTEGER},
+			</if>
+			<if test="awardCodeType != null">
+				award_code_type = #{awardCodeType,jdbcType=INTEGER},
+			</if>
+			<if test="awardProperty != null">
+				award_property = #{awardProperty,jdbcType=INTEGER},
+			</if>
+			<if test="awardQrcodeFlag != null">
+				award_qrcode_flag = #{awardQrcodeFlag,jdbcType=INTEGER},
+			</if>
+			<if test="userInfoType != null">
+				user_info_type = #{userInfoType,jdbcType=VARCHAR},
+			</if>
+			<if test="awardVipDuration != null">
+				award_vip_duration = #{awardVipDuration,jdbcType=INTEGER},
+			</if>
+			<if test="awardVideoId != null">
+				award_video_id = #{awardVideoId,jdbcType=INTEGER},
+			</if>
+			<if test="awardVideoPartnerId != null">
+				award_video_partner_id = #{awardVideoPartnerId,jdbcType=INTEGER},
+			</if>
+			<if test="awardPrice != null">
+				award_price = #{awardPrice,jdbcType=INTEGER},
+			</if>
+			<if test="awardDisVipDuration != null">
+				award_dis_vip_duration = #{awardDisVipDuration,jdbcType=INTEGER},
+			</if>
+			<if test="awardVideoName != null">
+				award_video_name = #{awardVideoName,jdbcType=VARCHAR},
+			</if>
+			<if test="awardMlAmount != null">
+				award_ml_amount = #{awardMlAmount,jdbcType=INTEGER},
+			</if>
+			<if test="awardVideoType != null">
+				award_video_type = #{awardVideoType,jdbcType=VARCHAR},
+			</if>
+			<if test="awardDiscount != null">
+				award_discount = #{awardDiscount,jdbcType=INTEGER},
+			</if>
+			<if test="awardPayUrl != null">
+				award_pay_url = #{awardPayUrl,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+	<update id="update" parameterType="com.hiveview.entity.po.award.Award">
+		UPDATE <include refid="table"/>
+		<include refid="setAward"/>
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+	<select id="selectIdsByActivityId" resultType="String">
+		SELECT
+			GROUP_CONCAT(id SEPARATOR ",") AS ids
+		FROM
+			<include refid="table"/>
+		WHERE
+			activity_id=#{activityId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteAward">
+		DELETE
+		FROM
+			<include refid="table"/>
+		WHERE
+			activity_id=#{activityId,jdbcType=INTEGER}
+			AND
+			(
+			id IN
+			<foreach collection="idList" item="item" index="index" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			)
+	</delete>
+	
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.po.award.Award" >
+		<id column="id" property="id" />
+		<result column="activity_id" property="activityId" />
+		<result column="award_type" property="awardType" />
+		<result column="award_name" property="awardName" />
+		<result column="award_pic_url" property="awardPicUrl" />
+		<result column="award_icon_url" property="awardIconUrl" />
+		<result column="award_desc" property="awardDesc" />
+		<result column="available_begin_time" property="availableBeginTime" />
+		<result column="available_end_time" property="availableEndTime" />
+		<result column="award_amount" property="awardAmount" />
+		<result column="award_current_amount" property="awardCurrentAmount" />
+		<result column="win_limit_day" property="winLimitDay" />
+		<result column="award_code_type" property="awardCodeType"/>
+		<result column="award_property" property="awardProperty" />
+		<result column="award_qrcode_flag" property="awardQrcodeFlag" />
+		<result column="user_info_type" property="userInfoType" />
+		<result column="award_vip_duration" property="awardVipDuration" />
+		<result column="award_video_id" property="awardVideoId" />
+		<result column="award_video_partner_id" property="awardVideoPartnerId" />
+		<result column="award_price" property="awardPrice" />
+		<result column="award_dis_vip_duration" property="awardDisVipDuration"/>
+		<result column="award_video_name" property="awardVideoName" />
+		<result column="award_ml_amount" property="awardMlAmount" />
+		<result column="award_video_type" property="awardVideoType" />
+		<result column="award_discount" property="awardDiscount" />
+		<result column="award_pay_url" property="awardPayUrl" />
+	</resultMap>
+	<sql id="queryBywhere">
+		<where>
+			<if test="activityId != null ">
+				and activity_id = #{activityId,jdbcType=INTEGER} 
+			</if>
+			<if test="awardCodeType != null">
+				and award_code_type = #{awardCodeType,jdbcType=INTEGER}
+			</if>
+		</where>
+	</sql>
+	<select id="getList" parameterType="com.hiveview.entity.po.award.Award" resultMap="BaseResultMap">
+		SELECT *
+		FROM <include refid="table" />
+		<include refid="queryBywhere"></include>
+	</select>
+	
+	<delete id="delete" parameterType="com.hiveview.entity.po.award.Award">
+	   DELETE FROM <include refid="table"/>
+	   WHERE activity_id=#{activityId,jdbcType=INTEGER}
+	</delete>
+	
+	<!-- 为导入中奖码-下载模版所用 -->
+	<select id="selectAwardList" resultMap="BaseResultMap">
+		SELECT
+			tad.id,tad.award_name,tad.award_type,tad.award_desc,(tad.award_amount-count(tac.id)) as award_amount
+		FROM
+			(
+				SELECT
+					id,award_name,award_type,award_desc,award_amount
+				FROM
+					<include refid="table"/>
+				WHERE
+					activity_id=#{activityId,jdbcType=INTEGER} and award_code_type=#{awardCodeType,jdbcType=INTEGER}
+			) tad
+		LEFT JOIN
+			t_award_code tac
+		ON
+			tad.id=tac.detail_id
+		GROUP BY
+			tad.id
+	</select>
+	
+	<!-- 为中奖码-选择中奖码-清空中奖码所用 -->
+	<select id="selectAwardListByAwardCodeType" resultType="map">
+		SELECT
+			id,award_name as text
+		FROM
+			<include refid="table"/>
+		WHERE
+			award_code_type=#{awardCodeType,jdbcType=INTEGER}
+			AND
+			activity_id=#{activityId,jdbcType=INTEGER}
+		GROUP BY
+			id,award_name
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	<select id="get" parameterType="com.hiveview.entity.po.award.Award" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<!-- hll:注释源码
+		<include refid="queryBywhere" />
+		 -->
+		 where activity_id = #{activityId,jdbcType=INTEGER}
+	</select>
+	
+	
+	
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  <include refid="table" />
+        <include refid="queryBywhere" />
+    </select>
+    
+   	
+	
+	
+
+	
+	
+	<select id="getActivityById" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE id = #{id,jdbcType=INTEGER}
+	</select>
+</mapper>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.cardPack.CardPackDao">
+	<sql id="table">
+		tb_cardpack_dm
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.cardpack.CardPack" >
+	<id column="id" property="id" />   
+	<result column="dm_card_val" property="dm_card_val" />
+	<result column="source_card_val" property="source_card_val" />
+	<result column="card_provider_id" property="card_provider_id" />
+	<result column="card_provider" property="card_provider" />
+	<result column="if_vip" property="if_vip" />
+	<result column="vip_days" property="vip_days" />
+	<result column="status" property="status" />
+	<result column="extract_status" property="extract_status" />
+	<result column="create_status" property="create_status" />
+	<result column="create_time" property="create_time" />
+	<result column="open_time" property="open_time" />
+	<result column="mac" property="mac" />
+	<result column="sn" property="sn" />
+	<result column="user_id" property="user_id" />
+	<result column="creator_name" property="creator_name" />
+	<result column="export_name" property="export_name" />
+	<result column="branch_name" property="branch_name" />
+	<result column="renew_num" property="renew_num" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			1=1
+			<if test="status != -1  ">
+				and status = #{status,jdbcType=INTEGER}
+			</if>
+
+			<if test="extract_status != -1 ">
+				and extract_status = #{extract_status,jdbcType=INTEGER}
+			</if>
+
+			<if test="create_status != -1 ">
+				and create_status = #{create_status,jdbcType=INTEGER}
+			</if>
+
+			<if test="dm_card_val != null &amp;&amp; dm_card_val !=''">
+				and dm_card_val = <![CDATA[ #{dm_card_val,jdbcType=VARCHAR} ]]>
+			</if>
+
+			<if test="select_renew_num != null &amp;&amp; select_renew_num !=''">
+				and renew_num =  #{select_renew_num,jdbcType=INTEGER}
+			</if>
+
+			<if test="user_id != null &amp;&amp; user_id !=''">
+				and user_id = <![CDATA[ #{user_id,jdbcType=VARCHAR} ]]>
+			</if>
+
+			<if test="branch_id != null &amp;&amp; branch_id !=''">
+				and branch_id  =   #{branch_id,jdbcType=INTEGER}
+			</if>
+
+			<if test="create_startTime != null &amp;&amp; create_startTime !='' &amp;&amp; create_endTime != null &amp;&amp; create_endTime !=''">
+				and create_time BETWEEN <![CDATA[ #{create_startTime,jdbcType=VARCHAR} ]]>   AND   <![CDATA[ #{create_endTime,jdbcType=VARCHAR} ]]>
+			</if>
+
+			<if test="open_startTime != null &amp;&amp; open_startTime !='' &amp;&amp; open_endTime != null &amp;&amp; open_endTime !=''">
+				and open_time BETWEEN <![CDATA[ #{open_startTime,jdbcType=VARCHAR} ]]>   AND   <![CDATA[ #{open_endTime,jdbcType=VARCHAR} ]]>
+			</if>
+			<if test="mac != null &amp;&amp; mac !=''">
+				and mac = <![CDATA[ #{mac,jdbcType=VARCHAR} ]]>
+			</if>
+			<if test="sn != null &amp;&amp; sn !=''">
+				and sn = <![CDATA[ #{sn,jdbcType=VARCHAR} ]]>
+			</if>
+			<if test="card_provider != -1 ">
+				and card_provider =  #{card_provider,jdbcType=INTEGER}
+			</if>
+
+			ORDER BY id desc
+
+		</where>
+	</sql>
+
+	<select id="getList" parameterType="com.hiveview.entity.cardpack.CardPack" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+
+	</select>
+	<select id="count" resultType="Integer">
+		SELECT COUNT(1) FROM  <include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<insert id="qyadd" parameterType="com.hiveview.entity.cardpack.CardPack" useGeneratedKeys="true">
+		INSERT INTO <include refid="table" />
+		(dm_card_val,card_provider,vip_days,if_vip,create_time,create_status,renew_num)
+		VALUES
+		<![CDATA[(#{dm_card_val},#{card_provider},#{vip_days},#{if_vip},#{create_time},#{create_status},#{renew_num})]]>;
+	</insert>
+
+	<insert id="qyaddList" parameterType="java.util.List" useGeneratedKeys="true">
+		INSERT INTO <include refid="table" />
+		(dm_card_val,card_provider,vip_days,if_vip,create_time,create_status,renew_num,creator_id,creator_name,branch_id,branch_name)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+		<![CDATA[  (#{item.dm_card_val},#{item.card_provider},#{item.vip_days},#{item.if_vip},#{item.create_time},#{item.create_status},#{item.renew_num},#{item.creator_id},#{item.creator_name} ,#{item.branch_id} ,#{item.branch_name}  )  ]]>
+		</foreach>
+	</insert>
+
+	<update id="updateTxcard" parameterType="com.hiveview.entity.cardpack.CardPack">
+		UPDATE    tb_cardpack_dm  SET
+		<if test="if_vip !=null &amp;&amp; if_vip !=''">
+			if_vip = #{if_vip,jdbcType=INTEGER},
+		</if>
+		<if test="vip_days !=null &amp;&amp; vip_days !=''">
+			vip_days = #{vip_days,jdbcType=INTEGER},
+		</if>
+		create_status=1
+		where card_provider=0 AND create_status =0
+		and id <![CDATA[ <= ]]> (select max(t.id) from (SELECT id FROM tb_cardpack_dm WHERE card_provider=0 AND create_status =0 LIMIT #{cardNum,jdbcType=INTEGER})t);
+	</update>
+
+	<!-- 获取 可以导出的卡片信息  -->
+	<select id="getExportAllList" parameterType="com.hiveview.entity.cardpack.ExportCardPack" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		where extract_status=0 and status=0
+		<if test="export_cardProvider != -1">
+			and card_provider = #{export_cardProvider,jdbcType=INTEGER}
+		</if>
+		<if test="export_renewNum !=null &amp;&amp; export_renewNum !=''">
+			and renew_num = #{export_renewNum,jdbcType=INTEGER}
+		</if>
+		<if test="branch_id !=null &amp;&amp; branch_id !=''">
+			and branch_id = #{branch_id,jdbcType=INTEGER}
+		</if>
+		ORDER BY  id
+
+		<if test="export_cardNum !=null &amp;&amp; export_cardNum !=''">
+			limit #{export_cardNum,jdbcType=INTEGER}
+		</if>
+		;
+	</select>
+
+	<!-- 获取最多可以导出多少张卡 -->
+	<select id="getStorgeNum" parameterType="com.hiveview.entity.cardpack.ExportCardPack" resultType="Integer">
+		SELECT count(1) FROM
+		<include refid="table" />
+		where extract_status=0 and status=0
+		<if test="export_cardProvider != -1">
+			and card_provider = #{export_cardProvider,jdbcType=INTEGER}
+		</if>
+		<if test="export_renewNum !=null &amp;&amp; export_renewNum !=''">
+			and renew_num = #{export_renewNum,jdbcType=INTEGER}
+		</if>
+		<if test="branch_id !=null &amp;&amp; branch_id !=''">
+			and branch_id = #{branch_id,jdbcType=INTEGER}
+		</if>
+		ORDER BY  id
+		;
+
+	</select>
+	<!-- 更新导出卡 的 状态 -->
+	<update id="updateExportCard" parameterType="com.hiveview.entity.cardpack.ExportCardPack">
+		UPDATE    tb_cardpack_dm  SET
+		<if test="export_id !=null &amp;&amp; export_id !=''">
+			export_id = #{export_id,jdbcType=INTEGER},
+		</if>
+		<if test="export_name !=null &amp;&amp; export_name !=''">
+			export_name = #{export_name,jdbcType=VARCHAR},
+		</if>
+		<if test="export_version !=null &amp;&amp; export_version !=''">
+			export_version = #{export_version,jdbcType=VARCHAR},
+		</if>
+		extract_status=1
+		where extract_status=0 and status=0
+		<if test="export_cardProvider != -1">
+			and card_provider = #{export_cardProvider,jdbcType=INTEGER}
+		</if>
+		<if test="export_renewNum !=null &amp;&amp; export_renewNum !=''">
+			and renew_num = #{export_renewNum,jdbcType=INTEGER}
+		</if>
+		and id <![CDATA[ <= ]]>   #{maxId,jdbcType=INTEGER}  ;
+	</update>
+
+</mapper>

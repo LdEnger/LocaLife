@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.award.AwardPlayDao">
+	<sql id="leftQueryBywhere">
+		<where>
+			<if test="userName != null">
+				and tap.user_name  like CONCAT ('%',#{userName,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="userPhone != null">
+				and tau.user_phone  like CONCAT ('%',#{userPhone,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="acceptFlag != null">
+				and tap.accept_flag = #{acceptFlag,jdbcType=INTEGER}
+			</if>
+			<if test="activityId != null">
+				and tap.activity_id = #{activityId,jdbcType=INTEGER}
+			</if>
+			<if test="mac !=null">
+				and tap.mac like CONCAT ('%',#{mac,jdbcType=VARCHAR},'%')
+			</if>
+		</where>
+	</sql>
+	<select id="getPlayerList" resultType="com.hiveview.entity.po.award.AwardPlay" parameterType="com.hiveview.entity.po.award.AwardPlay">
+		SELECT
+		tap.id as id,
+		tap.activity_id as activityId,
+		tap.detail_id as detailId,
+		tap.user_id as userId,
+		tap.user_name as userName,
+		tap.mac as mac,
+		tap.sn as sn,
+		tap.award_type as awardType,
+		tap.award_code as awardCode,
+		tap.award_name as awardName,
+		tap.play_time as playTime,
+		tap.accept_flag as acceptFlag,
+		tap.user_phone as userPhone,
+		tap.real_name as realName
+		FROM t_award_play tap
+		LEFT JOIN t_award_activity taa on taa.id=tap.activity_id
+		LEFT JOIN t_award_user tau on tap.user_id=tau.user_id
+		<include refid="leftQueryBywhere" />
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+	<select id="count" resultType="INTEGER" parameterType="com.hiveview.entity.po.award.AwardPlay">
+		SELECT COUNT(1) 
+		FROM t_award_play tap
+		LEFT JOIN t_award_activity taa on taa.id=tap.activity_id
+		LEFT JOIN t_award_user tau on tap.user_id=tau.user_id
+		<include refid="leftQueryBywhere" />
+	</select>
+	
+	<!-- 
+	<select id="selectPlayerList" resultType="com.hiveview.entity.po.award.AwardPlay" parameterType="com.hiveview.entity.po.award.AwardPlay">
+		SELECT
+		tap.id as id,
+		tap.activity_id as activityId,
+		tap.detail_id as detailId,
+		tap.user_id as userId,
+		tap.user_name as userName,
+		tap.mac as mac,
+		tap.sn as sn,
+		tap.award_type as awardType,
+		tap.award_code as awardCode,
+		tap.award_name as awardName,
+		tap.play_time as playTime,
+		tap.accept_flag as acceptFlag,
+		tau.user_phone as userPhone,
+		tau.real_name as realName
+		FROM t_award_play tap
+		LEFT JOIN t_award_activity taa on taa.id=tap.activity_id
+		LEFT JOIN t_award_user tau on tap.user_id=tau.user_id
+		<include refid="leftQueryBywhere" />
+	</select>
+	 -->
+	
+	<!-- 
+	<sql id="table">
+		t_award_play
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.po.award.AwardPlay">
+		<id column="id" property="id" />
+		<id column="activity_id" property="activityId" />
+		<id column="detail_id" property="detailId" />
+		<id column="user_id" property="userId" />
+		<id column="user_name" property="userName" />
+		<id column="mac" property="mac" />
+		<id column="sn" property="sn" />
+		<id column="play_time" property="playTime" />
+		<id column="award_name" property="awardName" />
+		<id column="award_type" property="awardType" />
+		<id column="award_code" property="awardCode" />
+		<id column="accept_flag" property="acceptFlag" />
+	</resultMap>
+	<select id="getList" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+	</select>
+	<select id="get" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+	</select>
+	 -->
+</mapper>

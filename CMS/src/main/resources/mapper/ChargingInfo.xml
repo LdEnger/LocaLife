@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.live.ChargingInfoDao">
+
+	<sql id="table">
+		tb_charging_info
+	</sql>
+
+	<sql id="column">
+		id,product_id,product_name,charging_id,charging_name,charging_price,charging_duration,
+		charging_pic,charging_str,charging_duration_year,charging_duration_month,charging_duration_day
+	</sql>
+
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.vo.VipPackagePriceVo">
+		<id column="product_id" property="productId" />
+		<id column="product_name" property="productName" />
+		<id column="charging_id" property="chargingId" />
+		<id column="charging_name" property="chargingName" />
+		<id column="charging_price" property="chargingPrice" />
+		<id column="charging_duration" property="chargingDuration" />
+		<id column="charging_pic" property="chargingPic" />
+		<id column="charging_str" property="chargingStr" />
+		<id column="charging_duration_year" property="chargingDurationYear" />
+		<id column="charging_duration_month" property="chargingDurationMonth" />
+		<id column="charging_duration_day" property="chargingDurationDay" />
+	</resultMap>
+
+	<select id="getChargingInfoByProductId" resultMap="BaseResultMap">
+		SELECT
+		<include refid="column" />
+		FROM
+		<include refid="table" />
+		WHERE product_id = #{productId}
+	</select>
+
+</mapper>
