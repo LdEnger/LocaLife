@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.liveTask.LiveTaskDao">
+	<sql id="table">
+		tb_live_task
+	</sql>
+	<sql id="column">
+		id,task_id,task_name,task_desc,branch_id,branch_name,hall_id,hall_name,product_id,product_name,
+		execute_result,open_id,open_name,open_province,	open_provincename,open_city,open_cityname,
+		DATE_FORMAT(submit_time,'%Y-%m-%d %H:%i:%s') AS submit_time,
+		DATE_FORMAT(open_time,'%Y-%m-%d %H:%i:%s') AS open_time,
+		DATE_FORMAT(close_time,'%Y-%m-%d %H:%i:%s') AS close_time
+		,task_type
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.liveTask.LiveTask" >
+		<id column="id" property="id" />   
+		<result column="task_id" property="taskId" />
+		<result column="task_name" property="taskName" />
+		<result column="task_desc" property="taskDesc" />
+		<result column="branch_id" property="branchId" />
+		<result column="branch_name" property="branchName" />
+		<result column="hall_id" property="hallId" />
+		<result column="hall_name" property="hallName" />
+		<result column="product_id" property="productId" />
+		<result column="product_name" property="productName" />
+		<result column="execute_result" property="executeResult" />
+		<result column="open_id" property="openId" />
+		<result column="open_name" property="openName" />
+		<result column="open_province" property="openProvince" />
+		<result column="open_provincename" property="openProvincename" />
+		<result column="open_city" property="openCity" />
+		<result column="open_cityname" property="openCityname" />
+		<result column="open_time" property="openTime" />
+		<result column="close_time" property="closeTime" />
+		<result column="submit_time" property="submitTime" />
+		<result column="task_type" property="taskType" />
+	</resultMap>
+	
+	<sql id="queryBywhere">
+		<where>
+			<if test="taskName != null and taskName != ''">
+				and task_name like CONCAT ('%',#{taskName,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="productName != null and productName != ''">
+				and product_name like CONCAT ('%',#{productName,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="branchId != null and branchId != ''">
+				and branch_id = #{branchId}
+			</if>
+			<if test="hallId != null and hallId != ''">
+				and hall_id = #{hallId}
+			</if>
+			<if test="openTime != null and openTime != ''">
+				and DATE_FORMAT(submit_time,'%Y-%m-%d') <![CDATA[>=]]> #{openTime,jdbcType=VARCHAR}
+			</if>
+			<if test="closeTime != null and closeTime != ''">
+				and DATE_FORMAT(submit_time,'%Y-%m-%d') <![CDATA[<=]]> #{closeTime,jdbcType=VARCHAR}
+			</if>
+			<if test="taskType != null and taskType != ''">
+				and task_type = #{taskType}
+			</if>
+		</where>
+	</sql>
+	
+	<select id="getList" parameterType="com.hiveview.entity.liveTask.LiveTask" resultMap="BaseResultMap">
+		SELECT <include refid="column"/>
+		FROM <include refid="table" />
+		<include refid="queryBywhere" />
+		order by submit_time desc
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1)
+        FROM  <include refid="table" />
+        <include refid="queryBywhere" />
+    </select>
+
+	<select id="getListByZone" parameterType="com.hiveview.entity.liveTask.LiveTask" resultMap="BaseResultMap">
+		SELECT
+		tlt.id,
+		tlt.task_id,
+		tlt.task_name,
+		tlt.task_desc,
+		tlt.branch_id,
+		tlt.branch_name,
+		tlt.hall_id,
+		tlt.hall_name,
+		tlt.product_id,
+		tlt.product_name,
+		tlt.execute_result,
+		tlt.open_id,
+		tlt.open_name,
+		tlt.open_province,
+		tlt.open_provincename,
+		tlt.open_city,
+		tlt.open_cityname,
+		DATE_FORMAT(tlt.submit_time,'%Y-%m-%d %H:%i:%s') AS submit_time,
+		DATE_FORMAT(tlt.open_time,'%Y-%m-%d %H:%i:%s') AS open_time,
+		DATE_FORMAT(tlt.close_time,'%Y-%m-%d %H:%i:%s') AS close_time,
+		tlt.task_type
+		FROM <include refid="table" /> tlt
+		LEFT JOIN tb_zone_city tzc ON tlt.open_city = tzc.city_id
+		<include refid="queryByZoneWhere" />
+		order by submit_time desc
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+
+	<select id="countByZone" resultType="Integer">
+		SELECT COUNT(1)
+		FROM  <include refid="table" /> tlt
+		LEFT JOIN tb_zone_city tzc ON tlt.open_city = tzc.city_id
+		<include refid="queryByZoneWhere" />
+	</select>
+
+	<sql id="queryByZoneWhere">
+		<where>
+			<if test="taskName != null and taskName != ''">
+				and tlt.task_name like CONCAT ('%',#{taskName,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="productName != null and productName != ''">
+				and tlt.product_name like CONCAT ('%',#{productName,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="branchId != null and branchId != ''">
+				and tlt.branch_id = #{branchId}
+			</if>
+			<if test="hallId != null and hallId != ''">
+				and tlt.hall_id = #{hallId}
+			</if>
+			<if test="openTime != null and openTime != ''">
+				and DATE_FORMAT(tlt.submit_time,'%Y-%m-%d') <![CDATA[>=]]> #{openTime,jdbcType=VARCHAR}
+			</if>
+			<if test="closeTime != null and closeTime != ''">
+				and DATE_FORMAT(tlt.submit_time,'%Y-%m-%d') <![CDATA[<=]]> #{closeTime,jdbcType=VARCHAR}
+			</if>
+			<if test="taskType != null and taskType != ''">
+				and tlt.task_type = #{taskType}
+			</if>
+			<if test="openZoneId != null" >
+				and tzc.zone_id = #{openZoneId,jdbcType=INTEGER}
+			</if>
+			<if test="openZoneName != null" >
+				and tzc.zone_name = #{openZoneName,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+    
+   	<insert id="save" parameterType="com.hiveview.entity.liveTask.LiveTask" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO <include refid="table" /> 
+	  (task_id,task_name,task_desc,branch_id,branch_name,hall_id,hall_name,product_id,product_name,execute_result,open_id,open_name,
+	   open_province,open_provincename,open_city,open_cityname,open_time,close_time,submit_time,task_type)
+	  VALUES
+	  (#{taskId},#{taskName},#{taskDesc},#{branchId},#{branchName},#{hallId},#{hallName},#{productId},#{productName},#{executeResult},#{openId},#{openName},
+	  #{openProvince},#{openProvincename},#{openCity},#{openCityname},#{openTime},#{closeTime},#{submitTime},#{taskType})
+	</insert>
+	
+	<update id="update">
+		update <include refid="table" /> 
+		set execute_result = #{executeResult} 
+		where task_id = #{taskId}
+	</update>
+
+	<update id="updateCloseTime">
+		update <include refid="table" />
+		set close_time = #{closeTime}
+		where task_id = #{taskId}
+	</update>
+
+	<delete id="delete">
+		DELETE FROM <include refid="table" />  
+		where task_id = #{taskId}
+	</delete>
+</mapper>

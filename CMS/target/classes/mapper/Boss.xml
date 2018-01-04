@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.card.BossDao">
+	
+	<sql id="file_where">
+		<where>
+			<if test="msg!=null and msg!=''">
+				and LEFT(ctime,10) =#{msg}
+			</if>
+			<if test="type &gt; 0">
+				and type=#{type}
+			</if>
+			<if test="status &gt; 0">
+				and status =#{status}
+			</if>
+		</where>
+	</sql>
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  tb_excel_file <include refid="file_where"/>
+    </select>
+    
+     <select id="getList" resultType="com.hiveview.entity.card.ExcelFile">
+        SELECT * FROM  tb_excel_file 
+        <include refid="file_where"/>
+        order by ctime desc
+        <if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+       
+    </select>
+    
+   	<insert id="save" parameterType="com.hiveview.entity.card.ExcelFile" useGeneratedKeys="true">
+	  insert into tb_excel_file (fileName, path, type, status, times, msg) values
+	  (#{fileName},#{path},#{type},#{status},#{times},#{msg})
+	</insert>
+	
+	<update id="update" parameterType="com.hiveview.entity.card.ExcelFile">
+		UPDATE tb_excel_file set
+		<if test="msg!=null">
+			msg =#{msg},
+		</if>
+		<if test="status!=null">
+			status =#{status},
+		</if>
+		<if test="times!=null">
+			times=#{times},
+		</if>
+		id =#{id}
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+	   DELETE FROM tb_excel_file
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	
+	<!-- product相关 -->
+	<insert id="saveProduct" parameterType="com.hiveview.entity.card.Product" useGeneratedKeys="true">
+		insert into tb_product (productId, cityName, cityId, productName, duration, serviceFlag, ctime, branchId, activityId, activityName,type) values
+		(#{productId},#{cityName},#{cityId},#{productName},#{duration},#{serviceFlag},#{ctime},#{branchId},#{activityId},#{activityName},#{type})
+	</insert>
+	<update id="updateProduct" parameterType="com.hiveview.entity.card.Product">
+		update tb_product set
+		<if test="branchId  &gt; 0">
+			branchId =#{branchId},
+		</if>
+		<if test="activityId &gt; 0">
+			activityId =#{activityId},
+			activityName =#{activityName},
+		</if>
+		
+		id=#{id} where id=#{id}
+	</update>
+	<sql id="product_where">
+		<where>
+			<if test="type  &gt; 0">
+				and type =#{type}
+			</if>
+			<if test="cityName!=null and cityName !=''">
+				and cityName like CONCAT('%','${cityName}','%')
+			</if>
+			<if test="productName!=null and productName!=''">
+				and productName like CONCAT('%','${productName}','%' )  
+			</if>
+			<if test="activityId==1">
+				<!-- 未关联 -->
+				and (activityId =0 or activityId is null)
+			</if>	
+			<if test="activityId==2">
+				<!-- 已关联 -->
+				and activityId &gt; 0
+			</if>
+			<if test="branchId  &gt; 0">
+				and branchId =#{branchId}
+			</if>			
+			
+		</where>
+	</sql>
+    <select id="countPorduct" resultType="Integer">
+        SELECT COUNT(1) FROM  tb_product <include refid="product_where"/>
+    </select>
+    
+     <select id="getProductList" resultType="com.hiveview.entity.card.Product">
+        SELECT * FROM  tb_product 
+        <include refid="product_where"/>
+        order by branchId,id desc
+        <if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+       
+    </select>
+    
+    <!-- new boss order  -->
+    <insert id="saveBossOrderNew" parameterType="com.hiveview.entity.card.BossOrderNew" useGeneratedKeys="true">
+		insert into tb_newBoss_order (orderId, customerId, customerName, productId, productName, amount, ctime, cuser, cgroup, startTime, endTime, cityName, cityId, phone, mac, sn, orderType, orderTypeId, serviceFlag, activityCode, status, msg, branchId,bossType,excelId,activityId) values
+		(#{orderId},#{customerId},#{customerName},#{productId},#{productName},#{amount},#{ctime},#{cuser},#{cgroup},#{startTime},#{endTime},#{cityName},#{cityId},#{phone},#{mac},#{sn},#{orderType},#{orderTypeId},#{serviceFlag},#{activityCode},#{status},#{msg},#{branchId},#{bossType},#{excelId},#{activityId})	
+	</insert>
+	<update id="updateBossOrderNew" parameterType="com.hiveview.entity.card.BossOrderNew">
+		update tb_newBoss_order set
+		<if test="activityCode!=null and activityCode!=''">
+			activityCode =#{activityCode},
+		</if>
+		<if test="status &gt; 0">
+			status =#{status},
+			msg =#{msg},
+		</if>
+		<if test="branchId  &gt; 0">
+			branchId =#{branchId},
+		</if>
+		<if test="activityId &gt; 0">
+			activityId =#{activityId},
+		</if>
+		<if test="mac!=null and mac!=''">
+			mac =#{mac},
+		</if>
+		<if test="sn!=null and sn!=''">
+			sn = #{sn},
+		</if>
+		<if test="phone!=null and phone !=''">
+			phone = #{phone},
+		</if>
+		
+		id=#{id} where id=#{id}
+	</update>
+	<sql id="orderNew_where">
+		<where>
+			<if test="branchId  &gt; 0">
+				and branchId =#{branchId}
+			</if>
+			<if test="status  &gt; 0">
+				and status =#{status}
+			</if>
+			<if test="bossType &gt; 0">
+				and bossType=#{bossType}
+			</if>
+			<if test="excelId &gt; 0">
+				and excelId =#{excelId}
+			</if>
+			<if test="ctime!=null and ctime!=''">
+				and ctime like CONCAT('${ctime}','%' )  
+			</if>
+			<if test="sn!=null and sn !=''">
+				and sn = #{sn}
+			</if>
+			<if test="activityId==1">
+				<!-- 未关联 -->
+				and (activityId =0 or activityId is null)
+			</if>	
+			<if test="activityId==2">
+				<!-- 已关联 -->
+				and activityId &gt; 0
+			</if>
+		</where>
+	</sql>
+    <select id="countBossOrderNew" resultType="Integer">
+        SELECT COUNT(1) FROM  tb_newBoss_order <include refid="orderNew_where"/>
+    </select>
+    
+     <select id="getBossOrderNewList" resultType="com.hiveview.entity.card.BossOrderNew">
+        SELECT * FROM  tb_newBoss_order 
+        <include refid="orderNew_where"/>
+        order by id desc
+        <if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+       
+    </select>
+    <select id="getBossOrderById" parameterType="Integer" resultType="com.hiveview.entity.card.BossOrderNew">
+    	select * from tb_newBoss_order where id =#{id}
+    </select>
+	
+	
+	<select id="getBossReport" resultType="com.hiveview.entity.card.BossOrderNew">
+		SELECT COUNT(c.branchId) AS excelId ,c.branchId AS branchId,c.productId AS activityId FROM (
+		SELECT a.branchId AS branchId ,b.product_id AS productId,b.product_name AS productName FROM tb_newBoss_order a 
+		LEFT JOIN tb_activity b ON a.activityId =b.id WHERE a.ctime  &gt; #{start} and #{end} &gt; a.ctime
+		) c 
+		GROUP BY c.branchId,c.productId
+    </select>
+    
+    <select id="getBossCityReport" resultType="com.hiveview.entity.card.BossOrderNew">
+		SELECT COUNT(c.cityName) AS excelId ,c.cityName AS cityName,c.productId AS activityId FROM (
+		SELECT a.cityName AS cityName ,b.product_id AS productId,b.product_name AS productName FROM tb_newBoss_order a 
+		LEFT JOIN tb_activity b ON a.activityId =b.id WHERE a.ctime  &gt; #{start} and #{end} &gt; a.ctime
+		) c 
+		GROUP BY c.cityName,c.productId
+    </select>
+</mapper>

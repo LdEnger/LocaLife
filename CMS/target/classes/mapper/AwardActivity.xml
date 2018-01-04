@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.award.AwardActivityDao">
+	<sql id="table">
+		t_award_activity
+	</sql>
+	<select id="getMaxSequence"  resultType="Integer">
+		select if(max(sequence) is null,0,max(sequence)+1) as sequence
+		from <include refid="table" />
+	</select>
+	<insert id="save" parameterType="com.hiveview.entity.po.award.AwardActivity" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO <include refid="table" />
+		(id,title,type,logo_url,bg_url,playing_bg_url,end_title,info_bg_url,end_text,begin_time,end_time,activity_desc,award_win_ratio,award_win_again,award_player_type,pay_begin_time,pay_end_time,pay_sum,award_remark,phone_bind_type,play_limit_day,play_prompt_day,play_limit_total,play_prompt_total,play_prompt_win,play_prompt_lost,sequence,show_flag)
+		values
+		(#{id},#{title},#{type},#{logoUrl},#{bgUrl},#{playingBgUrl},#{endTitle},#{infoBgUrl},#{endText},#{beginTime},#{endTime},#{activityDesc},#{awardWinRatio},#{awardWinAgain},#{awardPlayerType},#{payBeginTime},#{payEndTime},#{paySum},#{awardRemark},#{phoneBindType},#{playLimitDay},#{playPromptDay},#{playLimitTotal},#{playPromptTotal},#{playPromptWin},#{playPromptLost},#{sequence},#{showFlag})
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<sql id="setAwardActivity">
+		<set>
+			<if test="title != null">
+				title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="logoUrl != null">
+				logo_url = #{logoUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="bgUrl != null">
+				bg_url = #{bgUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="playingBgUrl != null">
+				playing_bg_url = #{playingBgUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="endTitle != null">
+				end_title = #{endTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="infoBgUrl != null">
+				info_bg_url = #{infoBgUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="endText != null">
+				end_text = #{endText,jdbcType=VARCHAR},
+			</if>
+			<if test="beginTime != null">
+				begin_time = #{beginTime},
+			</if>
+			<if test="endTime != null">
+				end_time = #{endTime},
+			</if>
+			<if test="activityDesc != null">
+				activity_desc = #{activityDesc,jdbcType=INTEGER},
+			</if>
+			<if test="awardWinRatio != null">
+				award_win_ratio = #{awardWinRatio,jdbcType=INTEGER},
+			</if>
+			<if test="awardWinAgain != null">
+				award_win_again = #{awardWinAgain,jdbcType=INTEGER},
+			</if>
+			<if test="awardPlayerType != null">
+				award_player_type = #{awardPlayerType,jdbcType=INTEGER},
+			</if>
+			<if test="payBeginTime != null">
+				pay_begin_time = #{payBeginTime},
+			</if>
+			<if test="payEndTime != null">
+				pay_end_time = #{payEndTime},
+			</if>
+			<if test="paySum != null">
+				pay_sum = #{paySum,jdbcType=VARCHAR},
+			</if>
+			<if test="awardRemark != null">
+				award_remark = #{awardRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="phoneBindType != null">
+				phone_bind_type = #{phoneBindType,jdbcType=INTEGER},
+			</if>
+			<if test="playLimitDay != null">
+				play_limit_day = #{playLimitDay,jdbcType=INTEGER},
+			</if>
+			<if test="playPromptDay != null">
+				play_prompt_day = #{playPromptDay,jdbcType=VARCHAR},
+			</if>
+			<if test="playLimitTotal != null">
+				play_limit_total = #{playLimitTotal,jdbcType=INTEGER},
+			</if>
+			<if test="playPromptTotal != null">
+				play_prompt_total = #{playPromptTotal,jdbcType=VARCHAR},
+			</if>
+			<if test="playPromptWin != null">
+				play_prompt_win = #{playPromptWin,jdbcType=VARCHAR},
+			</if>
+			<if test="playPromptLost != null">
+				play_prompt_lost = #{playPromptLost,jdbcType=VARCHAR},
+			</if>
+			<if test="sequence != null and sequence != 0">
+				sequence = #{sequence,jdbcType=INTEGER},
+			</if>
+			<if test="showFlag != null">
+				show_flag=#{showFlag,jdbcType=INTEGER},
+			</if>
+			<!-- 
+			<if test="awardCodeType != null">
+				award_code_type = #{awardCodeType,jdbcType=INTEGER},
+			</if>
+			<if test="awardWinLimit != null">
+				award_win_limit = #{awardWinLimit,jdbcType=INTEGER},
+			</if>
+			 -->
+		</set>
+	</sql>
+	<update id="update" parameterType="com.hiveview.entity.po.award.AwardActivity">
+		UPDATE <include refid="table"/>
+		<include refid="setAwardActivity"/>
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+	
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.po.award.AwardActivity" >
+		<id column="id" property="id" />   
+		<result column="title" property="title" />
+		<result column="type" property="type" />
+		<result column="logo_url" property="logoUrl" />
+		<result column="bg_url" property="bgUrl" />
+		<result column="playing_bg_url" property="playingBgUrl" />
+		<result column="end_title" property="endTitle" />
+		<result column="info_bg_url" property="infoBgUrl" />
+		<result column="end_text" property="endText" />
+		<result column="begin_time" property="beginTime" />
+		<result column="end_time" property="endTime" />
+		<result column="activity_desc" property="activityDesc" />
+		<result column="award_win_ratio" property="awardWinRatio" />
+		<result column="award_win_again" property="awardWinAgain" />
+		<result column="award_player_type" property="awardPlayerType" />
+		<result column="pay_begin_time" property="payBeginTime" />
+		<result column="pay_end_time" property="payEndTime" />
+		<result column="pay_sum" property="paySum" />
+		<result column="award_remark" property="awardRemark" />
+		<result column="phone_bind_type" property="phoneBindType" />
+		<result column="play_limit_day" property="playLimitDay" />
+		<result column="play_prompt_day" property="playPromptDay" />
+		<result column="play_limit_total" property="playLimitTotal" />
+		<result column="play_prompt_total" property="playPromptTotal" />
+		<result column="play_prompt_win" property="playPromptWin" />
+		<result column="play_prompt_lost" property="playPromptLost" />
+		<result column="sequence" property="sequence" />
+		<result column="show_flag" property="showFlag"/>
+		<!-- 
+		<result column="award_code_type" property="awardCodeType" />
+		<result column="award_win_limit" property="awardWinLimit" />
+		 -->
+	</resultMap>
+	<sql id="queryBywhere">
+		<where>
+			<if test="title != null">
+				and title like CONCAT ('%',#{title,jdbcType=VARCHAR},'%')
+			</if>
+		</where>
+	</sql>
+	<select id="getList" parameterType="com.hiveview.entity.po.award.AwardActivity" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+		order by sequence desc
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	<select id="count" resultType="Integer">
+        SELECT COUNT(1)
+        FROM  <include refid="table" />
+        <include refid="queryBywhere" />
+    </select>
+    
+    <delete id="delete" parameterType="com.hiveview.entity.po.award.AwardActivity">
+	   DELETE FROM <include refid="table"/>
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="getBySeq" parameterType="com.hiveview.entity.po.award.AwardActivity" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		where sequence = #{sequence,jdbcType=INTEGER};
+	</select>
+	<select id="getBigger" resultType="Integer">
+		SELECT MIN(sequence) FROM
+		<include refid="table" />
+		where sequence &gt; #{sequence,jdbcType=INTEGER};
+	</select>
+	<select id="getSmaller" resultType="Integer">
+		SELECT MAX(sequence) FROM
+		<include refid="table" />
+		where sequence &lt; #{sequence,jdbcType=INTEGER};
+	</select>
+	
+	<select id="selectAwardActivityType" resultType="map">
+		SELECT
+			type_code as typeCode,type_name as typeName
+		FROM
+			t_award_activity_type
+		ORDER BY id ASC
+	</select>
+	
+	<!-- //以下为其它模块所用 -->
+	<select id="getAwardActivityById"  resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		where id=#{id,jdbcType=INTEGER}
+	</select>
+	
+	<!-- 
+	<select id="get" parameterType="com.hiveview.entity.po.award.AwardActivity" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+	<select id="getActivityById" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE id = #{id,jdbcType=INTEGER}
+	</select>
+	 -->
+</mapper>

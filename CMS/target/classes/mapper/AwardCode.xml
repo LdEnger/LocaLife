@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.award.AwardCodeDao">
+	<sql id="table">
+		t_award_code
+	</sql>
+	<insert id="add" parameterType="com.hiveview.entity.po.award.AwardCode" useGeneratedKeys="true">
+		INSERT INTO <include refid="table" />
+		(detail_id,award_code_type,award_code,accept_flag)
+		VALUES
+		(#{detailId},#{awardCodeType},#{awardCode},#{acceptFlag})
+	</insert>
+	
+	<!-- 
+	<select id="selectAwardCodeCountByDetailId" resultType="int">
+		select count(1)
+		from <include refid="table"></include>
+		where detail_id = #{detailId,jdbcType=INTEGER}
+	</select>
+	 -->
+	
+	
+	<sql id="codeTable">
+		t_award_code tac
+	</sql>
+	<sql id="playTable">
+		t_award_play tap
+	</sql>
+	<sql id="detailTable">
+		t_award_detail tad
+	</sql>
+	<sql id="userTable">
+		t_award_user tau
+	</sql>
+	<sql id="checkByCondition">
+		<where>
+			<if test="userPhone != null">
+				and tau.user_phone like CONCAT ('%',#{userPhone,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="awardCode != null">
+				and tac.award_code like CONCAT ('%',#{awardCode,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="awardName != null">
+				and tad.award_name like CONCAT ('%',#{awardName,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="awardType != null">
+				and tad.award_type like CONCAT ('%',#{awardType,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="acceptFlag != null">
+				and tac.accept_flag = #{acceptFlag,jdbcType=INTEGER}
+			</if>
+			and tac.detail_id in (select id from t_award_detail where activity_id = #{activityId,jdbcType=INTEGER})
+		</where>
+	</sql>
+	<select id="getList" resultType="com.hiveview.entity.po.award.AwardCode" parameterType="com.hiveview.entity.po.award.AwardCode">
+		SELECT 
+		tac.id,tac.award_code awardCode,tad.award_name awardName,tad.award_type awardType,tap.real_name realName,tap.user_phone userPhone,
+		tap.mac mac,tap.play_time playTime,tad.available_end_time availableEndTime,tac.accept_flag acceptFlag,
+		tap.user_addr userAddress,tap.postcode
+		FROM
+		<include refid="codeTable" /> left join <include refid="playTable" />
+		on	tac.award_code = tap.award_code
+		left join <include refid="detailTable" />on	tac.detail_id = tad.id
+		left join <include refid="userTable" />on	tap.user_id = tau.user_id
+		<include refid="checkByCondition"/>
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	<select id="count" resultType="int" parameterType="com.hiveview.entity.po.award.AwardCode">
+		SELECT  COUNT(1) FROM
+		<include refid="codeTable" /> left join <include refid="playTable" />
+		on	tac.award_code = tap.award_code
+		left join <include refid="detailTable" />on	tac.detail_id = tap.id
+		left join <include refid="userTable" />on	tap.user_id = tau.user_id
+		<include refid="checkByCondition"/>
+	</select>
+	
+	<delete id="deleteAwardCodeByDetailId">
+		DELETE
+		FROM
+			<include refid="table"/>
+		WHERE
+			detail_id=#{detailId,jdbcType=INTEGER}
+	</delete>
+	
+	<!-- 
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.po.award.AwardCode" >
+		<id column="id" property="id" />   
+		<result column="detail_id" property="detailId" />
+		<result column="award_code" property="awardCode" />
+		<result column="accept_flag" property="acceptFlag" />
+		<result column="award_code_type" property="awardCodeType" />
+	</resultMap>
+	<sql id="setAwardCode">
+		<set>
+		<if test="detailId != null">
+			detail_id = #{detailId,jdbcType=INTEGER},
+		</if>
+		<if test="awardCode != null">
+			award_code = #{awardCode,jdbcType=VARCHAR},
+		</if>
+		<if test="acceptFlag != null">
+			accept_flag = #{acceptFlag,jdbcType=INTEGER},
+		</if>
+		</set>
+	</sql>
+	 -->
+</mapper>

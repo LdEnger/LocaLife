@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.py.CardPyDetailDao">
+    <resultMap id="BaseResultMap" type="com.hiveview.entity.py.CardPyDetail">
+        <id column="id" property="id"/>
+        <result column="mac" property="mac"/>
+        <result column="sn" property="sn"/>
+        <result column="user_id" property="user_id"/>
+        <result column="card_open" property="card_open"/>
+        <result column="card_order_py" property="card_order_py"/>
+        <result column="use_status" property="use_status"/>
+        <result column="card_service" property="card_service"/>
+        <result column="duration" property="duration"/>
+        <result column="create_time" property="create_time"/>
+        <result column="open_time" property="open_time"/>
+        <result column="end_time" property="end_time"/>
+        <result column="effective_days_length" property="effective_days_length"/>
+        <result column="branch_id" property="branch_id"/>
+        <result column="branch_name" property="branch_name"/>
+        <result column="py_id" property="py_id"/>
+        <result column="card_cancel" property="card_cancel"/>
+    </resultMap>
+    <sql id="column">
+        id, mac,sn,user_id,card_open,card_order_py,use_status,card_service,duration,create_time,
+        open_time,end_time,effective_days_length,branch_id,branch_name,py_id,card_cancel
+    </sql>
+    <sql id="queryBywhere">
+        <where>
+            <if test="card_open != -1">
+                and card_open = #{card_open}
+            </if>
+            <if test="use_status != -1">
+                and use_status = #{use_status}
+            </if>
+            <if test="mac != null &amp;&amp; mac !=''">
+                and mac = <![CDATA[ #{mac} ]]>
+            </if>
+            <if test="sn != null &amp;&amp; sn !=''">
+                and sn = <![CDATA[ #{sn} ]]>
+            </if>
+            <if test="create_startTime != null &amp;&amp; create_startTime !='' &amp;&amp; create_endTime != null &amp;&amp; create_endTime !=''">
+                and create_time BETWEEN <![CDATA[ #{create_startTime} ]]>  AND <![CDATA[ #{create_endTime} ]]>
+            </if>
+            <if test="card_order_py != null &amp;&amp; card_order_py !=''">
+                and card_order_py = #{card_order_py}
+            </if>
+            <if test="branch_id != null &amp;&amp; branch_id !=''">
+                and branch_id = #{branch_id}
+            </if>
+            <if test="py_id != null &amp;&amp; py_id !=''">
+                and py_id = #{py_id}
+            </if>
+        </where>
+    </sql>
+
+    <select id="getList" parameterType="com.hiveview.entity.py.CardPyDetail" resultMap="BaseResultMap">
+        SELECT
+        <include refid="column"/>
+        FROM tb_card_py_detail
+        <include refid="queryBywhere"/>
+        ORDER BY id DESC
+        <if test="skipNo != -1">
+            LIMIT #{skipNo},#{pageSize}
+        </if>
+    </select>
+
+    <select id="count" parameterType="com.hiveview.entity.py.CardPyDetail" resultType="Integer">
+        SELECT COUNT(1) FROM tb_card_py_detail
+        <include refid="queryBywhere"/>
+    </select>
+
+    <insert id="insertPyDetail" parameterType="java.util.List" useGeneratedKeys="true">
+        INSERT INTO tb_card_py_detail
+        (card_open,card_order_py,use_status,card_service,duration,create_time,
+        effective_days_length,branch_id,branch_name,py_id,card_cancel)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            <![CDATA[(#{item.card_open},#{item.card_order_py},#{item.use_status},#{item.card_service},
+          #{item.duration},#{item.create_time},#{item.effective_days_length},#{item.branch_id} ,#{item.branch_name},#{item.py_id},#{item.card_cancel})]]>
+        </foreach>
+    </insert>
+
+    <!-- 获取 可以导出的卡片信息  -->
+    <select id="getExportAllList" parameterType="com.hiveview.entity.py.ExportCardPy" resultMap="BaseResultMap">
+        SELECT
+        <include refid="column"/>
+        FROM tb_card_py_detail WHERE py_id = #{py_id}
+    </select>
+
+    <select id="getExportDetailAllList" parameterType="com.hiveview.entity.py.CardPyDetail" resultMap="BaseResultMap">
+        SELECT
+        <include refid="column"/>
+        FROM tb_card_py_detail
+        <include refid="queryBywhere"/>
+    </select>
+
+    <select id="getCardPyById" parameterType="Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="column"/>
+        FROM tb_card_py_detail
+        WHERE use_status = 2 and card_cancel = 2 AND id=#{id}
+    </select>
+
+    <select id="getCardPyByOrderId" parameterType="String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="column"/>
+        FROM tb_card_py_detail
+        WHERE card_order_py = #{card_order_py}
+    </select>
+
+    <update id="updateCardPyDetail" parameterType="com.hiveview.entity.py.CardPyDetail">
+        UPDATE tb_card_py_detail
+        <include refid="setCardPyDetail"/>
+        WHERE id=#{id}
+    </update>
+    <sql id="setCardPyDetail">
+        <set>
+            <if test="card_cancel != null">
+                card_cancel = #{card_cancel},
+            </if>
+            <if test="use_status != null">
+                use_status = #{use_status}
+            </if>
+        </set>
+    </sql>
+
+
+</mapper>

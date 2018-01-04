@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.liveTask.LiveTaskDetailDao">
+
+	<sql id="table">
+		tb_live_task_detail
+	</sql>
+	
+	<sql id="column">
+		id,task_id,mac,sn,order_id,open_result_type,open_result_name
+	</sql>
+	
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.liveTask.LiveTaskDetail" >
+		<id column="id" property="id" />   
+		<result column="task_id" property="taskId" />
+		<result column="mac" property="mac" />
+		<result column="sn" property="sn" />
+		<result column="order_id" property="orderId" />
+		<result column="open_result_type" property="openResultType" />
+		<result column="open_result_name" property="openResultName" />
+	</resultMap>
+	
+	<select id="getTaskDetailListByTaskId"  resultMap="BaseResultMap">
+		SELECT <include refid="column"/> 
+		FROM  <include refid="table" />
+		WHERE task_id = #{taskId} 
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) 
+        FROM  <include refid="table" />
+        WHERE task_id = #{taskId} 
+    </select>
+    
+   	<insert id="save" parameterType="com.hiveview.entity.liveTask.LiveTaskDetail" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO <include refid="table" /> 
+	  (task_id,mac,sn,order_id,open_result_type,open_result_name) 
+	  VALUES
+	  (#{taskId},#{mac},#{sn},#{orderId},#{openResultType},#{openResultName});
+	</insert>
+
+</mapper>

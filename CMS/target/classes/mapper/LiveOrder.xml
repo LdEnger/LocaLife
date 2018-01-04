@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.live.LiveOrderDao">
+
+	<sql id="table">
+		tb_live_order
+	</sql>
+	
+	<sql id="column">
+		id,live_orderid,status,status_name,record_status,product_id,product_name,charging_id,charging_name,
+		charging_price,charging_duration,charging_img,DATE_FORMAT(submit_time,'%Y-%m-%d %H:%i:%s') AS submit_time,
+		DATE_FORMAT(open_time,'%Y-%m-%d') AS open_time,DATE_FORMAT(close_time,'%Y-%m-%d') AS close_time,
+		open_province,open_provincename,open_city,open_cityname,open_uid,open_name,uid,uname,mac,sn,devicecode,charging_duration_year,
+		charging_duration_month,charging_duration_day,branch_id,branch_name,order_type,order_type_name,last_user,DATE_FORMAT(last_time,'%Y-%m-%d %H:%i:%s') AS last_time
+	</sql>
+	
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.live.LiveOrder" >
+	<id column="id" property="id" />  
+	<id column="live_orderid" property="liveOrderId" />   
+	<id column="status" property="status" />   
+	<id column="status_name" property="statusName" />   
+	<id column="record_status" property="recordStatus" />   
+	<id column="product_id" property="productId" />   
+	<id column="product_name" property="productName" /> 
+	<id column="charging_id" property="chargingId" />   
+	<id column="charging_name" property="chargingName" />   
+	<id column="charging_price" property="chargingPrice" />   
+	<id column="charging_duration" property="chargingDuration" />   
+	<id column="charging_img" property="chargingImg" />   
+	<id column="submit_time" property="submitTime" />   
+	<id column="open_time" property="openTime" />   
+	<id column="close_time" property="closeTime" /> 
+	<id column="open_province" property="openProvince" />   
+	<id column="open_provincename" property="openProvinceName" />   
+	<id column="open_city" property="openCity" />   
+	<id column="open_cityname" property="openCityName" />   
+	<id column="branch_id" property="branchId" />
+	<id column="hall_id" property="hallId" />
+	<id column="hall_name" property="hallName" />
+	<id column="open_uid" property="openuid" />
+	<id column="open_name" property="openname" />   
+	<id column="uid" property="uid" />   
+	<id column="uname" property="uname" />   
+	<id column="mac" property="mac" /> 
+	<id column="sn" property="sn" /> 
+	<id column="devicecode" property="devicecode" /> 
+	<id column="charging_duration_year" property="chargingDurationYear" />
+	<id column="charging_duration_month" property="chargingDurationMonth" />
+	<id column="charging_duration_day" property="chargingDurationDay" />
+	<id column="branch_name" property="branchName" />
+	<id column="order_type" property="orderType" />
+	<id column="order_type_name" property="orderTypeName" />
+	<id column="last_user" property="lastUser" />
+	<id column="last_time" property="lastTime" />
+	</resultMap>
+	
+	<sql id="setActivityOrder">
+		<set>
+		<if test="status != null">
+			status = #{status,jdbcType=INTEGER},
+		</if>
+		<if test="statusName != null">
+			status_name = #{statusName,jdbcType=VARCHAR},
+		</if>
+		<if test="recordStatus != null">
+			record_status = #{recordStatus,jdbcType=INTEGER},
+		</if>
+		<if test="productId != null">
+			product_id = #{productId,jdbcType=INTEGER},
+		</if>
+		<if test="productName != null">
+			product_name = #{productName,jdbcType=VARCHAR},
+		</if>
+		<if test="chargingId != null">
+			charging_id = #{chargingId,jdbcType=INTEGER},
+		</if>
+		<if test="chargingName != null">
+			charging_name = #{chargingName,jdbcType=VARCHAR},
+		</if>
+		<if test="chargingPrice != null">
+			charging_price = #{chargingPrice,jdbcType=INTEGER},
+		</if>
+		<if test="chargingDuration != null">
+			charging_duration = #{chargingDuration,jdbcType=INTEGER},
+		</if>
+		<if test="chargingImg != null">
+			charging_img = #{chargingImg,jdbcType=VARCHAR},
+		</if>
+		<if test="submitTime != null">
+			submit_time = #{submitTime,jdbcType=VARCHAR},
+		</if>
+		<if test="openTime != null">
+			open_time = #{openTime,jdbcType=VARCHAR},
+		</if>
+		<if test="closeTime != null">
+			close_time = #{closeTime,jdbcType=VARCHAR},
+		</if>
+		<if test="uid != null">
+			uid = #{uid,jdbcType=INTEGER},
+		</if>
+		<if test="uname != null">
+			uname = #{uname,jdbcType=INTEGER},
+		</if>
+		<if test="mac != null">
+			mac = #{mac,jdbcType=VARCHAR},
+		</if>
+		<if test="sn != null">
+			sn = #{sn,jdbcType=VARCHAR},
+		</if>
+		<if test="devicecode != null">
+			devicecode = #{devicecode,jdbcType=VARCHAR}
+		</if>
+		</set>
+	</sql>
+	<sql id="getLiveListWhere">
+		<where>
+			<if test="uid != null">
+				and uid = #{uid,jdbcType=INTEGER}
+			</if>
+			<if test="mac != null">
+				and mac = #{mac,jdbcType=VARCHAR}
+			</if>
+			<if test="sn != null">
+				and sn = #{sn,jdbcType=VARCHAR}
+			</if>
+			<if test="submitTime != null">
+				and DATE_FORMAT(open_time,'%Y-%m-%d') <![CDATA[>=]]> #{submitTime,jdbcType=VARCHAR}
+			</if>
+			<if test="openTime != null">
+				and DATE_FORMAT(open_time,'%Y-%m-%d') <![CDATA[<=]]> #{openTime,jdbcType=VARCHAR}
+			</if>
+			<if test="branchId != null">
+				and branch_id = #{branchId,jdbcType=INTEGER}
+			</if>
+			<if test="hallId != null">
+				and hall_id = #{hallId,jdbcType=INTEGER}
+			</if>
+			<if test="status != -1 and status != null" >
+				and status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="openname != '' and openname != null" >
+				and open_name like CONCAT ('%',#{openname,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="orderType != -1 and orderType != null" >
+				and order_type = #{orderType,jdbcType=INTEGER}
+			</if>
+			<if test="productId != null" >
+				and product_id = #{productId,jdbcType=INTEGER}
+			</if>
+		</where>
+	</sql>
+	
+	<select id="getLiveList" parameterType="com.hiveview.entity.live.LiveOrder" resultMap="BaseResultMap">
+		SELECT <include refid="column" />
+		FROM  <include refid="table" />
+		<include refid="getLiveListWhere" /> 
+			order by submit_time desc
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+	<select id="count"  parameterType="com.hiveview.entity.live.LiveOrder" resultType="INTEGER">
+		SELECT COUNT(1)
+		FROM  <include refid="table" /> 
+		<include refid="getLiveListWhere" /> 
+	</select>
+
+	<select id="getLiveListByZone" parameterType="com.hiveview.entity.live.LiveOrder" resultMap="BaseResultMap">
+		SELECT
+		tlo.id,
+		tlo.live_orderid,
+		tlo.STATUS,
+		tlo.status_name,
+		tlo.record_status,
+		tlo.product_id,
+		tlo.product_name,
+		tlo.charging_id,
+		tlo.charging_name,
+		tlo.charging_price,
+		tlo.charging_duration,
+		tlo.charging_img,
+		DATE_FORMAT(tlo.submit_time,'%Y-%m-%d %H:%i:%s') AS submit_time,
+		DATE_FORMAT(tlo.open_time, '%Y-%m-%d') AS open_time,
+		DATE_FORMAT(tlo.close_time, '%Y-%m-%d') AS close_time,
+		tlo.open_province,
+		tlo.open_provincename,
+		tlo.open_city,
+		tlo.open_cityname,
+		tlo.open_uid,
+		tlo.open_name,
+		tlo.uid,
+		tlo.uname,
+		tlo.mac,
+		tlo.sn,
+		tlo.devicecode,
+		tlo.charging_duration_year,
+		tlo.charging_duration_month,
+		tlo.charging_duration_day,
+		tlo.branch_id,
+		tlo.branch_name,
+		tlo.hall_id,
+		tlo.hall_name,
+		tlo.order_type,
+		tlo.order_type_name,
+		tlo.last_user,
+		DATE_FORMAT(tlo.last_time,'%Y-%m-%d %H:%i:%s') AS last_time
+		FROM  <include refid="table" /> tlo
+		LEFT JOIN tb_zone_city tzc ON tlo.open_city = tzc.city_id
+		<include refid="getLiveListByZoneWhere" />
+		order by submit_time desc
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+
+	<select id="countByZone"  parameterType="com.hiveview.entity.live.LiveOrder" resultType="INTEGER">
+		SELECT COUNT(1)
+		FROM  <include refid="table" /> tlo
+		LEFT JOIN tb_zone_city tzc ON tlo.open_city = tzc.city_id
+		<include refid="getLiveListByZoneWhere" />
+	</select>
+
+	<sql id="getLiveListByZoneWhere">
+		<where>
+			<if test="uid != null">
+				and tlo.uid = #{uid,jdbcType=INTEGER}
+			</if>
+			<if test="mac != null">
+				and tlo.mac = #{mac,jdbcType=VARCHAR}
+			</if>
+			<if test="sn != null">
+				and tlo.sn = #{sn,jdbcType=VARCHAR}
+			</if>
+			<if test="submitTime != null">
+				and DATE_FORMAT(tlo.open_time,'%Y-%m-%d') <![CDATA[>=]]> #{submitTime,jdbcType=VARCHAR}
+			</if>
+			<if test="openTime != null">
+				and DATE_FORMAT(tlo.open_time,'%Y-%m-%d') <![CDATA[<=]]> #{openTime,jdbcType=VARCHAR}
+			</if>
+			<if test="branchId != null">
+				and tlo.branch_id = #{branchId,jdbcType=INTEGER}
+			</if>
+			<if test="hallId != null">
+				and tlo.hall_id = #{hallId,jdbcType=INTEGER}
+			</if>
+			<if test="status != -1 and status != null" >
+				and tlo.status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="openname != '' and openname != null" >
+				and tlo.open_name like CONCAT ('%',#{openname,jdbcType=VARCHAR},'%')
+			</if>
+			<if test="orderType != -1 and orderType != null" >
+				and tlo.order_type = #{orderType,jdbcType=INTEGER}
+			</if>
+			<if test="productId != null" >
+				and tlo.product_id = #{productId,jdbcType=INTEGER}
+			</if>
+			<if test="openZoneId != null" >
+				and tzc.zone_id = #{openZoneId,jdbcType=INTEGER}
+			</if>
+			<if test="openZoneName != null" >
+				and tzc.zone_name = #{openZoneName,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<insert id="save" parameterType="com.hiveview.entity.live.LiveOrder" useGeneratedKeys="true">
+		  INSERT INTO <include refid="table" /> 
+		  (live_orderid,status,status_name,product_id,product_name,charging_id,charging_name,charging_price,charging_duration
+		  ,charging_duration_year,charging_duration_month,charging_duration_day,charging_img,submit_time,open_time,close_time
+		  ,open_province,open_provincename,open_city,open_cityname,branch_id,branch_name,hall_id,hall_name,open_uid,open_name
+		  ,uid,uname,mac,sn,devicecode,order_type,order_type_name)
+		  VALUES
+		  (#{liveOrderId},#{status},#{statusName},#{productId},#{productName},#{chargingId},#{chargingName},#{chargingPrice},#{chargingDuration}
+		  ,#{chargingDurationYear},#{chargingDurationMonth},#{chargingDurationDay},#{chargingImg},#{submitTime},#{openTime},#{closeTime}
+		  ,#{openProvince},#{openProvinceName},#{openCity},#{openCityName},#{branchId},#{branchName},#{hallId},#{hallName},#{openuid}
+		  ,#{openname},#{uid},#{uname},#{mac},#{sn},#{devicecode},#{orderType},#{orderTypeName});
+	</insert> 	
+
+	<update id="updateLiveOrderStstus" >
+		UPDATE <include refid="table" /> 
+		<set>
+			<if test="status == 2">
+				status = #{status,jdbcType=INTEGER},status_name='已开通',open_time=#{startTime},close_time=#{closeTime}
+			</if>
+			<if test="status == 3">
+				status = #{status,jdbcType=INTEGER},status_name='开通失败'
+			</if>
+			<if test="status == 4">
+				status = #{status,jdbcType=INTEGER},status_name='已退订',
+			</if>
+		</set>
+		WHERE live_orderid= #{liveOrderId}
+	</update>
+	<update id="updateLiveOrderRefundStstus" >
+		UPDATE <include refid="table" /> 
+		<set>
+			status = 4,status_name='已退订',last_user=#{lastUser},last_time=#{lastTime}
+		</set>
+		WHERE live_orderid= #{liveOrderId}
+	</update>
+	<select id="countExist"  parameterType="com.hiveview.entity.live.LiveOrder" resultType="INTEGER">
+		SELECT count(1)
+		FROM <include refid="table" />
+		WHERE product_id = #{productId}
+		AND mac = #{mac}
+		AND sn = #{sn}
+		AND status = 2
+	</select>
+	<delete id="deleteLiveOrderByOrderId" parameterType="STRING">
+		DELETE FROM <include refid="table" /> 
+		WHERE live_orderid = #{orderId};
+	</delete>
+	<update id="rapInfo" >
+		UPDATE tb_live_order a LEFT JOIN sys_user b ON a.open_uid = b.sys_user_id SET a.branch_id = b.branch_id,
+		 a.branch_name = b.branch_name,
+		 a.hall_id = b.hall_id,
+		 a.hall_name = b.hall_name WHERE (a.branch_id IS NULL OR a.hall_id IS NULL) AND a.id > 100;
+	</update>
+</mapper>

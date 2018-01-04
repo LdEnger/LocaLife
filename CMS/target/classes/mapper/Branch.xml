@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.BranchDao">
+	<sql id="table">
+		tb_branch
+	</sql>
+	
+	<sql id="column">
+		id,branch_name,province_code,province_name,city_code,city_name,bossBranchNew,bossBranchOld
+	</sql>
+	
+	<resultMap type="Branch" id="branch">
+		<result property="id" column="id" />
+		<result property="branchName" column="branch_name" />
+		<result property="provinceCode" column="province_code" />
+		<result property="provinceName" column="province_name" />
+		<result property="cityCode" column="city_code" />
+		<result property="cityName" column="city_name" />
+		<result property="bossBranchNew" column="bossBranchNew" />
+		<result property="bossBranchOld" column="bossBranchOld" />
+	</resultMap>
+	
+	<select id="getBranchListByArea" parameterType="STRING" resultMap="branch">
+		SELECT <include refid="column"/> 
+		FROM <include refid="table"/> 
+		WHERE city_code=#{cityCode}
+	</select>
+	
+	<select id="getBranchList" parameterType="com.hiveview.entity.Branch"  resultMap="branch">
+		SELECT <include refid="column"/> 
+		FROM <include refid="table"/> 
+	</select>
+	
+	<insert id="addBranch" parameterType="com.hiveview.entity.Branch" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO <include refid="table"/>
+		(branch_name,update_time,province_code,province_name,city_code,city_name,bossBranchNew,bossBranchOld)
+		VALUES
+		(#{branchName,jdbcType=VARCHAR},now(),#{provinceCode,jdbcType=VARCHAR},#{provinceName,jdbcType=VARCHAR}
+		,#{cityCode,jdbcType=VARCHAR},#{cityName,jdbcType=VARCHAR},#{bossBranchNew},#{bossBranchOld})
+	</insert>
+	
+	<select id="getBranchName" parameterType="STRING" resultType="INTEGER">
+		select count(1)
+		from <include refid="table"/> 
+		where branch_name = #{branchName} limit 1
+	</select>
+	
+	<select id="getBranchById" parameterType="Integer" 	resultType="String">
+		SELECT branch_name FROM 
+		<include refid="table"/> 
+		<where>
+			<if test='id !=null'>
+				id = #{id,jdbcType=INTEGER}
+			</if>
+		</where>
+	</select>
+	
+	<delete id="delete" parameterType="com.hiveview.entity.Branch">
+	   DELETE FROM <include refid="table"/>
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="getBranchInfoById" parameterType="Integer" 	resultMap="branch" >
+		SELECT <include refid="column"/> 
+		FROM <include refid="table"/> 
+		where id = #{id}
+		limit 1
+	</select>
+	<select id="getList" parameterType="com.hiveview.entity.Branch"  resultMap="branch">
+		SELECT <include refid="column"/> 
+		FROM <include refid="table"/> 
+		where 1=1 
+		<if test="branchName!=null and branchName!=''">
+			and branch_name like CONCAT ('%',#{branchName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	<select id="count"  resultType="INTEGER">
+		SELECT count(1) 
+		FROM <include refid="table"/>  where 1=1
+		<if test="branchName!=null and branchName!=''">
+			and branch_name like CONCAT ('%',#{branchName,jdbcType=VARCHAR},'%')
+		</if>
+	</select>
+	<update id="updateBranch" parameterType="com.hiveview.entity.Branch">
+		update <include refid="table"/>  set id=#{id},
+		<if test="branchName!=null and branchName!=''">
+			branch_name =#{branchName},
+		</if>
+		<if test="provinceCode!=null">
+			province_code=#{provinceCode},
+		</if>
+		<if test="provinceName!=null and provinceName!=''">
+			province_name=#{provinceName},
+		</if>
+		<if test="cityCode!=null">
+			city_code=#{cityCode},
+		</if>
+		<if test="bossBranchNew!=null and bossBranchNew!='xuhaobo'">
+			bossBranchNew=#{bossBranchNew},
+		</if>
+		<if test="bossBranchOld !=null and bossBranchOld !='xuhaobo'">
+			bossBranchOld=#{bossBranchOld},
+		</if>
+		<if test="cityName!=null and cityName!=''">
+			city_name=#{cityName}
+		</if>
+		 where id= #{id}
+	</update>
+	
+	<!-- down is  bosscity -->
+	<insert id="addBranchBossCity" parameterType="com.hiveview.entity.card.BranchBossCity" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO tb_branch_bosscity
+		(branchId,cityName,bossType)
+		VALUES
+		(#{branchId},#{cityName},#{bossType})
+	</insert>
+	<delete id="deleteBranchBossCityByBranchId" parameterType="com.hiveview.entity.card.BranchBossCity">
+		delete from tb_branch_bosscity where branchId =#{branchId} and bossType =#{bossType}
+	</delete>
+	<select id="getBossCityByCityName" parameterType="com.hiveview.entity.card.BranchBossCity" resultType="com.hiveview.entity.card.BranchBossCity">
+		select * from tb_branch_bosscity where 1=1 
+		<if test="cityName !=null and cityName !=''">
+			cityName =#{cityName}	
+		</if>
+		
+	</select>
+</mapper>

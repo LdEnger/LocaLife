@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.py.CardPyDao">
+
+    <resultMap id="BaseResultMap" type="com.hiveview.entity.py.CardPy">
+        <id column="id" property="id"/>
+        <result column="card_open" property="card_open"/>
+        <result column="card_service" property="card_service"/>
+        <result column="duration" property="duration"/>
+        <result column="create_time" property="create_time"/>
+        <result column="creator_id" property="creator_id"/>
+        <result column="creator_name" property="creator_name"/>
+        <result column="effective_days_length" property="effective_days_length"/>
+        <result column="branch_id" property="branch_id"/>
+        <result column="branch_name" property="branch_name"/>
+        <result column="card_num" property="card_num"/>
+        <result column="success_card" property="success_card"/>
+        <result column="error_card" property="error_card"/>
+    </resultMap>
+    <sql id="column">
+        id,card_open,card_service,duration,create_time,creator_id,creator_name,
+        effective_days_length,branch_id,branch_name,card_num,success_card,error_card
+   </sql>
+    <sql id="queryBywhere">
+        <where>
+            <if test="card_open != -1">
+                and card_open = #{card_open}
+            </if>
+            <if test="creator_name !=null &amp;&amp; creator_name !=''">
+                and creator_name like CONCAT ('%',#{creator_name},'%')
+            </if>
+            <if test="branch_id != null &amp;&amp; branch_id !=''">
+                and branch_id = #{branch_id}
+            </if>
+        </where>
+    </sql>
+
+    <select id="getList" parameterType="com.hiveview.entity.py.CardPy" resultMap="BaseResultMap">
+        SELECT
+        <include refid="column"/>
+        FROM tb_card_py
+        <include refid="queryBywhere"/>
+        ORDER BY id DESC
+        <if test="skipNo != -1">
+            LIMIT #{skipNo},#{pageSize}
+        </if>
+    </select>
+
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM tb_card_py
+        <include refid="queryBywhere"/>
+    </select>
+
+    <insert id="pyaddList" parameterType="com.hiveview.entity.py.CardPy" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_card_py(card_open,card_service,duration,create_time,creator_id,
+        creator_name,effective_days_length,branch_id,branch_name,card_num)
+        VALUES(#{card_open},#{card_service},#{duration},#{create_time},#{creator_id},
+        #{creator_name},#{effective_days_length},#{branch_id},#{branch_name},#{card_num})
+    </insert>
+
+
+</mapper>

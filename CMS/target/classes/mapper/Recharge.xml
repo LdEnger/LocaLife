@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.discount.RechargeDao">
+	<sql id="table">
+		tb_recharge
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.discount.Recharge" >
+	<id column="id" property="id" />   
+	<result column="recharge_amount" property="rechargeAmount" />
+	<result column="recharge_name" property="rechargeName" />
+	<result column="thumbnail_img" property="thumbnailImg" />
+	<result column="big_img" property="bigImg" />
+	<result column="description" property="description" />
+	<result column="status" property="status" />
+	<result column="update_time" property="updateTime" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="status !=null">
+				and status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="rechargeName != null">
+				and recharge_name like CONCAT ('%',#{rechargeName,jdbcType=VARCHAR},'%')
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="setRecharge">
+		<set>
+		<if test="rechargeAmount != null">
+			recharge_amount = #{rechargeAmount,jdbcType=INTEGER},
+		</if>
+		<if test="rechargeName != null">
+			recharge_name = #{rechargeName,jdbcType=VARCHAR},
+		</if>
+		<if test="thumbnailImg != null">
+			thumbnail_img = #{thumbnailImg,jdbcType=VARCHAR},
+		</if>
+		<if test="bigImg != null">
+			big_img = #{bigImg,jdbcType=VARCHAR},
+		</if>
+		<if test="description != null">
+			description = #{description,jdbcType=VARCHAR},
+		</if>
+		<if test="status != null">
+			status = #{status,jdbcType=INTEGER},
+		</if>
+			update_time = now()
+		</set>
+	</sql>
+	
+	<select id="getList" parameterType="com.hiveview.entity.discount.Recharge" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+    <select id="count" resultType="Integer">
+        SELECT COUNT(1) FROM  
+        <include refid="table" />
+        <include refid="queryBywhere" />
+    </select>
+    
+   	<insert id="save" parameterType="com.hiveview.entity.discount.Recharge" useGeneratedKeys="true">
+	  INSERT INTO 
+	  <include refid="table" /> 
+	  (recharge_amount,recharge_name,thumbnail_img,big_img,description,status,update_time) 
+	  VALUES
+	  (#{rechargeAmount},#{rechargeName},#{thumbnailImg},#{bigImg},#{description},#{status},now());
+	</insert>
+	
+	<update id="update" parameterType="com.hiveview.entity.discount.Recharge">
+		UPDATE 
+		<include refid="table"/>
+		<include refid="setRecharge"/>
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="com.hiveview.entity.discount.Recharge">
+	   DELETE FROM 
+	   <include refid="table"/>
+	   WHERE id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="getAllEnabledRecharge" parameterType="com.hiveview.entity.discount.Recharge" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE status=1
+	</select>
+</mapper>

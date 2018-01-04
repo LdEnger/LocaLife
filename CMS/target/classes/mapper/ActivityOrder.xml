@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.activity.ActivityOrderDao">
+	<sql id="table">
+		tb_activity_order
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.activity.ActivityOrder" >
+	<id column="id" property="id" />  
+	<id column="activity_order_id" property="activityOrderId" />   
+	<id column="activity_order_type" property="activityOrderType" />   
+	<id column="activity_order_type_name" property="activityOrderTypeName" />   
+	<id column="activity_order_status" property="activityOrderStatus" />   
+	<id column="activity_order_status_name" property="activityOrderStatusName" />   
+	<id column="record_status" property="recordStatus" />   
+	<id column="charging_id" property="chargingId" />   
+	<id column="charging_name" property="chargingName" />   
+	<id column="charging_price" property="chargingPrice" />   
+	<id column="charging_duration" property="chargingDuration" />   
+	<id column="charging_img" property="chargingImg" />   
+	<id column="submit_time" property="submitTime" />   
+	<id column="activity_time" property="activityTime" />   
+	<id column="uid" property="uid" />   
+	<id column="uname" property="uname" />   
+	<id column="mac" property="mac" /> 
+	<id column="sn" property="sn" /> 
+	<id column="devicecode" property="devicecode" /> 
+	</resultMap>
+	
+	
+	<sql id="setActivityOrder">
+		<set>
+		<if test="activityOrderType != null">
+			activity_order_type = #{activityOrderType,jdbcType=INTEGER},
+		</if>
+		<if test="activityOrderTypeName != null">
+			activity_order_type_name = #{activityOrderTypeName,jdbcType=VARCHAR},
+		</if>
+		<if test="activityOrderStatus != null">
+			activity_order_status = #{activityOrderStatus,jdbcType=INTEGER},
+		</if>
+		<if test="activityOrderStatusName != null">
+			activity_order_status_name = #{activityOrderStatusName,jdbcType=VARCHAR},
+		</if>
+		<if test="recordStatus != null">
+			record_status = #{recordStatus,jdbcType=INTEGER},
+		</if>
+		<if test="chargingId != null">
+			charging_id = #{chargingId,jdbcType=INTEGER},
+		</if>
+		<if test="chargingName != null">
+			charging_name = #{chargingName,jdbcType=VARCHAR},
+		</if>
+		<if test="chargingPrice != null">
+			charging_price = #{chargingPrice,jdbcType=INTEGER},
+		</if>
+		<if test="chargingDuration != null">
+			charging_duration = #{chargingDuration,jdbcType=INTEGER},
+		</if>
+		<if test="chargingImg != null">
+			charging_img = #{chargingImg,jdbcType=VARCHAR},
+		</if>
+		<if test="submitTime != null">
+			submit_time = #{submitTime,jdbcType=VARCHAR},
+		</if>
+		<if test="activityTime != null">
+			activity_time = #{activityTime,jdbcType=VARCHAR},
+		</if>
+		<if test="uid != null">
+			uid = #{uid,jdbcType=INTEGER},
+		</if>
+		<if test="uname != null">
+			uname = #{uname,jdbcType=INTEGER},
+		</if>
+		<if test="mac != null">
+			mac = #{mac,jdbcType=VARCHAR},
+		</if>
+		<if test="sn != null">
+			sn = #{sn,jdbcType=VARCHAR},
+		</if>
+		<if test="devicecode != null">
+			devicecode = #{devicecode,jdbcType=VARCHAR}
+		</if>
+		</set>
+	</sql>
+	
+	<sql id="queryBywhere">
+		<where>
+			<if test="id != null ">
+				and id = #{id,jdbcType=INTEGER} 
+			</if>
+			<if test="recordStatus != null ">
+				and record_status = #{recordStatus,jdbcType=INTEGER} 
+			</if>
+			<if test="activityOrderId != null">
+				and activity_order_id = #{activityOrderId,jdbcType=VARCHAR}
+			</if>
+			<if test="activityOrderStatus != null">
+				and activity_order_status = #{activityOrderStatus,jdbcType=INTEGER}
+			</if>
+			<if test="uid != null">
+				and uid = #{uid,jdbcType=INTEGER}
+			</if>
+		</where>
+	</sql>
+	
+	
+	<insert id="save" parameterType="com.hiveview.entity.activity.ActivityOrder" useGeneratedKeys="true">
+		  INSERT INTO <include refid="table" /> 
+		  (activity_order_id,activity_order_type,activity_order_type_name,activity_order_status
+		  ,activity_order_status_name,charging_id,charging_name,charging_price,charging_duration
+		  ,charging_img,submit_time,activity_time,uid,uname,mac,sn,devicecode)
+		  VALUES
+		  (#{activityOrderId},#{activityOrderType},#{activityOrderTypeName},#{activityOrderStatus}
+		  ,#{activityOrderStatusName},#{chargingId},#{chargingName},#{chargingPrice},#{chargingDuration}
+		  ,#{chargingImg},#{submitTime},#{activityTime},#{uid},#{uname},#{mac},#{sn},#{devicecode});
+	</insert> 
+	
+	<select id="get" parameterType="com.hiveview.entity.activity.ActivityOrder" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+	
+	<update id="update" parameterType="com.hiveview.entity.activity.ActivityOrder">
+		UPDATE <include refid="table"/>
+		<include refid="setActivityOrder"/>
+		WHERE activity_order_id=#{activityOrderId,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="clearRecord" parameterType="com.hiveview.entity.activity.ActivityOrder">
+		UPDATE <include refid="table"/>
+		<include refid="setActivityOrder"/>
+		WHERE uid=#{uid,jdbcType=VARCHAR} AND activity_order_status = #{activityOrderStatus,jdbcType=INTEGER} AND record_status=0
+		<if test="activityOrderId != null">
+				AND activity_order_id = #{activityOrderId,jdbcType=VARCHAR}
+		</if>
+		<if test="activityOrderType != null">
+				AND activity_order_type = #{activityOrderType,jdbcType=INTEGER}
+		</if>
+	</update>
+	
+	<select id="getList" parameterType="com.hiveview.entity.activity.ActivityOrder" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	
+	<select id="getUnsucList"  resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		WHERE activity_order_status = 1
+	</select>
+	
+	<update id="changeOrderStatus" parameterType="String">
+		UPDATE <include refid="table"/>
+		SET activity_order_status = 2 AND activity_order_status_name="已激活"
+		WHERE activity_order_id=#{activityOrderId,jdbcType=VARCHAR}
+	</update>
+
+</mapper>

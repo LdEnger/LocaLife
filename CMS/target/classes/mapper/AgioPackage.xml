@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.agio.AgioPackageConfDao">
+	<select id="getList" parameterType="com.hiveview.entity.agio.AgioPackageConf" resultType="com.hiveview.entity.agio.AgioPackageConf">
+		select * from tb_agio_package_conf 
+		where 1=1
+		<if test="state!=null and state!=''">
+			and state =#{state}
+		</if>
+		order by agioValue
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	<sql id="where_for_pool">
+		<where>
+			<if test="zondId!=null and zondId!='' and zondId!='-1'">
+				and zondId =#{zondId}
+			</if>
+			<if test="branchId!=null and branchId !='' and branchId!='-1'">
+				and branchId =#{branchId}
+			</if>
+			<if test="createBy!=null and createBy!='' and createBy!='-1'">
+				and createBy =#{createBy}
+			</if>
+			<if test="orderId!=null and orderId!=''">
+				and LEFT(createTime,10) =#{orderId}
+			</if>
+		</where>
+	</sql>
+	<sql id="where_for_view">
+		<where>
+			<if test="queryBranchIds!=null and queryBranchIds!='-1'">
+				and branchId in (#{queryBranchIds})
+			</if>
+		</where>
+	</sql>
+	<sql id="where_for_package">
+		<where>
+			<if test="zoneId!=null and zoneId!=''">
+			  and zoneId =#{zoneId}
+			</if>
+			<if test="branchId!=null and branchId!='' and branchId!='-1'">
+			  and branchId =#{branchId}
+			</if>
+			<if test="state!=null">
+			  and state=#{state}
+			</if>
+			<if test="createBy!=null and createBy!='' and createBy!='-1'">
+			  and createBy= #{createBy}
+			</if>
+		</where>
+	</sql>
+	<select id="getAgioPackageList" parameterType="com.hiveview.entity.agio.AgioPackage" resultType="com.hiveview.entity.agio.AgioPackage">
+		select * from tb_agio_package
+		<include refid="where_for_package"/>
+		order by updateTime desc
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	<select id="getPoolList" parameterType="com.hiveview.entity.agio.AgioPackagePool" resultType="com.hiveview.entity.agio.AgioPackagePool">
+		select * from tb_agio_package_pool 
+		<include refid="where_for_pool"/>
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	<select id="getViewList" parameterType="com.hiveview.entity.agio.AgioPackageView" resultType="com.hiveview.entity.agio.AgioPackageView">
+		select * from tb_agio_package_view
+		<include refid="where_for_view"/>
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+	</select>
+	<select id="getAgioPackageCount" resultType="Integer">
+		select count(1) from tb_agio_package
+		<include refid="where_for_package"/>
+	</select>
+	<select id="getPoolCount" resultType="Integer">
+		select count(1) from tb_agio_package_pool
+		<include refid="where_for_pool"/>
+	</select>
+	<select id="getViewConut" resultType="Integer">
+		select count(1) from tb_agio_package_view
+		<include refid="where_for_view"/>
+	</select>
+	<select id="count" resultType="Integer">
+		select count(1) from tb_agio_package_conf
+	</select>
+	
+	<insert id="save"  parameterType="com.hiveview.entity.agio.AgioPackageConf" useGeneratedKeys="true">
+		insert into tb_agio_package_conf (agioName, agioValue, state) values(#{agioName}, #{agioValue}, #{state})
+	</insert>
+	<update id="update"  parameterType="com.hiveview.entity.agio.AgioPackageConf">
+		update tb_agio_package_conf set id =#{id},
+		<if test="agioValue!=null and agioValue!= ''">
+			 agioValue =#{agioValue},
+		</if>
+		<if test="agioName!=null and agioName!=''">
+			 agioName =#{agioName},
+		</if>
+			 state =#{state} where id=#{id}
+	</update>
+	<insert id="savePool" parameterType="com.hiveview.entity.agio.AgioPackagePool" useGeneratedKeys="true">
+		insert into tb_agio_package_pool 
+		(orderId, amount, zondId, branchId, packageConfId,createBy) values
+		(#{orderId},#{amount},#{zondId},#{branchId},#{packageConfId},#{createBy})
+	</insert>
+	<insert id="saveAgioPackage" parameterType="com.hiveview.entity.agio.AgioPackage"  useGeneratedKeys="true">
+		insert into tb_agio_package 
+		(zoneId, branchId, packageName, packAmount, agioPackageId, state, createBy, createTime, updateBy) 
+		values
+		(#{zoneId},#{branchId},#{packageName},#{packAmount},#{agioPackageId},#{state},#{createBy},#{createTime},#{updateBy})
+	</insert>
+	<update id="updateAgioPackage" parameterType="com.hiveview.entity.agio.AgioPackage">
+		UPDATE tb_agio_package set id=#{id},
+		<if test="packAmount!=null and packAmount!=''">
+			packAmount =#{packAmount},
+		</if>
+		<if test="packageName!=null and packageName!=''">
+			packageName=#{packageName},
+		</if>
+		<if test="agioPackageId!=null and agioPackageId!=''">
+			agioPackageId=#{agioPackageId},
+		</if>
+		<if test="state!=null">
+			state=#{state},
+		</if>
+		     updateBy =#{updateBy}
+		  where id =#{id}
+	</update>
+	<sql id="query_package_batch">
+		<where>
+			<if test="zoneId!=null and zoneId!=''">
+			  and zoneId =#{zoneId}
+			</if>
+			<if test="branchId!=null and branchId!='' and branchId!='-1'">
+			  and branchId =#{branchId}
+			</if>
+			<if test="state!=null">
+			  and state=#{state}
+			</if>
+			<if test="opUserInfo!=null and opUserInfo!='' and opUserInfo!='-1'">
+			  and opUserInfo= #{opUserInfo}
+			</if>
+		
+		</where>
+		
+	</sql>
+	<select id="getAgioPackageBatchList" parameterType="com.hiveview.entity.agio.AgioPackageBatch" resultType="com.hiveview.entity.agio.AgioPackageBatch">
+		select * from tb_agio_package_bacth
+		<include refid="query_package_batch"/>
+		order by id desc 
+		<if test="skipNo != -1">
+			LIMIT #{skipNo},#{pageSize}
+		</if>
+		
+	</select>
+	<select id="getAgioPackageBatchCount" resultType="Integer">
+		select count(*) from tb_agio_package_bacth
+		<include refid="query_package_batch"/>
+	</select>
+	<insert id="saveAgioPackageBatch" parameterType="com.hiveview.entity.agio.AgioPackageBatch" useGeneratedKeys="true">
+		insert into tb_agio_package_bacth (fileUrl, pkgId, zoneId, branchId, hallId, opUserInfo, remark, state, text, downloadUrl, fileName) 
+        values(#{fileUrl},#{pkgId},#{zoneId},#{branchId},#{hallId},#{opUserInfo},#{remark},#{state},#{text},#{downloadUrl},#{fileName})
+	</insert>
+	<update id="updateAgioPackageBatch" parameterType="com.hiveview.entity.agio.AgioPackageBatch" >
+		update tb_agio_package_bacth set id=#{id}
+		<if test="state!=null">
+			,state =#{state}
+		</if>
+		<if test="text!=null and text!=''">
+			,text =#{text}
+		</if>
+		<if test="downloadUrl!=null and downloadUrl!=''">
+			,downloadUrl=#{downloadUrl}
+		</if>
+		where id =#{id}
+	</update>
+	
+	<insert id="saveAgioPackageBatchTask" parameterType="com.hiveview.entity.agio.AgioPackageBatchTask" useGeneratedKeys="true">
+		insert into tb_agio_bacth_task (bacthId, userNum, orderNum, mac, sn, phone, state, msg) values
+		(#{bacthId},#{userNum},#{orderNum},#{mac},#{sn},#{phone},#{state},#{msg})
+	</insert>
+	<select id="getAgioPackageBatchTaskList" parameterType="com.hiveview.entity.agio.AgioPackageBatchTask" resultType="com.hiveview.entity.agio.AgioPackageBatchTask">
+		select * from tb_agio_bacth_task where bacthId =#{bacthId}
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>
