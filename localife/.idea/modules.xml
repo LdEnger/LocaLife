@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/api-valueadded-cn/api-locallife-cn.iml" filepath="$PROJECT_DIR$/api-valueadded-cn/api-locallife-cn.iml" />
+      <module fileurl="file://$USER_HOME$/Documents/Tencent Files/563017312/FileRecv/CMS/cms-activity-cn.iml" filepath="$USER_HOME$/Documents/Tencent Files/563017312/FileRecv/CMS/cms-activity-cn.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cms-valueadded-cn/cms-locallife-cn.iml" filepath="$PROJECT_DIR$/cms-valueadded-cn/cms-locallife-cn.iml" />
+      <module fileurl="file://$PROJECT_DIR$/localife.iml" filepath="$PROJECT_DIR$/localife.iml" />
+    </modules>
+  </component>
+</project>
