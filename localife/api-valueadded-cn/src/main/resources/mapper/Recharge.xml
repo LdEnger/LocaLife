@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.discount.RechargeDao">
+	<sql id="table">
+		tb_recharge
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.discount.Recharge" >
+	<result column="recharge_amount" property="rechargeAmount" />
+	</resultMap>
+    
+	<select id="getAllEnabledRecharge" parameterType="com.hiveview.entity.discount.Recharge" resultMap="BaseResultMap">
+		SELECT recharge_amount FROM
+		<include refid="table" />
+		WHERE status=1
+	</select>
+</mapper>

@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.award.AwardPlayDao">
+	<sql id="table">
+		t_award_play
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.po.award.AwardPlay">
+		<id column="id" property="id" />
+		<id column="activity_id" property="activityId" />
+		<id column="detail_id" property="detailId" />
+		<id column="user_id" property="userId" />
+		<id column="user_name" property="userName" />
+		<id column="mac" property="mac" />
+		<id column="sn" property="sn" />
+		<id column="play_time" property="playTime" />
+		<id column="award_name" property="awardName" />
+		<id column="award_type" property="awardType" />
+		<id column="award_code" property="awardCode" />
+		<id column="accept_flag" property="acceptFlag" />
+		<id column="device_code" property="deviceCode" />
+		<id column="user_phone" property="userPhone" />
+		<id column="user_addr" property="userAddr" />
+		<id column="real_name" property="realName" />
+		<id column="postcode" property="postcode" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="id != null ">
+				and id = #{id,jdbcType=INTEGER}
+			</if>
+			<if test="userId != null ">
+				and user_id = #{userId,jdbcType=VARCHAR}
+			</if>
+			<if test="activityId != null ">
+				and activity_id = #{activityId,jdbcType=INTEGER}
+			</if>
+			<if test="detailId != null ">
+				and detail_id = #{detailId,jdbcType=INTEGER}
+			</if>
+			<if test="playTime != null ">
+				and play_time = #{playTime}
+			</if>
+			<!-- isWin -->
+			<if test="awardCode != null and isWin != null ">
+				and	award_code &lt;&gt; #{awardCode,jdbcType=VARCHAR}
+			</if>
+			<if test="awardCode != null and isWin == null ">
+				and	award_code = #{awardCode,jdbcType=VARCHAR}
+			</if>
+			<if test="acceptFlag != null">
+				and accept_flag = #{acceptFlag,jdbcType=INTEGER}
+			</if>
+			<if test="playTimeYMD != null">
+				and DATE_FORMAT(play_time,'%Y-%m-%d') = #{playTimeYMD,jdbcType=DATE}
+			</if>
+			<if test="userPhone != null">
+				and user_phone = #{userPhone,jdbcType=VARCHAR}
+			</if>
+			<if test="userAddr != null">
+				and user_addr = #{userAddr,jdbcType=VARCHAR}
+			</if>
+			<if test="realName != null">
+				and real_name = #{realName,jdbcType=VARCHAR}
+			</if>
+			<if test="postcode != null">
+				and postcode = #{postcode,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<select id="get" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="getList" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<insert id="save" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		<include refid="table" />
+		(activity_id, detail_id, user_id, user_name, mac, sn, play_time,
+		award_name, award_type, award_code, accept_flag, device_code,user_phone,user_addr,real_name,postcode)
+		VALUES
+		(#{activityId},
+		#{detailId}, #{userId}, #{userName}, #{mac}, #{sn}, NOW(),
+		#{awardName}, #{awardType}, #{awardCode}, #{acceptFlag},#{deviceCode},#{userPhone},#{userAddr},#{realName},#{postcode});
+	</insert>
+		
+	<sql id="setAwardPlay">
+		<set>
+			<if test="activityId != null">
+				activity_id = #{activityId,jdbcType=INTEGER},
+			</if>
+			<if test="detailId != null">
+				detail_id = #{detailId,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				user_name = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="mac != null">
+				mac = #{mac,jdbcType=VARCHAR},
+			</if>
+			<if test="sn != null">
+				sn = #{sn,jdbcType=VARCHAR},
+			</if>
+			<if test="playTime != null">
+				play_time = #{playTime},
+			</if>
+			<if test="awardName != null">
+				award_name = #{awardName,jdbcType=VARCHAR},
+			</if>
+			<if test="awardType != null">
+				award_type = #{awardType,jdbcType=VARCHAR},
+			</if>
+			<if test="awardCode != null ">
+				award_code = #{awardCode,jdbcType=VARCHAR},
+			</if>
+			<if test="acceptFlag != null">
+				accept_flag = #{acceptFlag,jdbcType=INTEGER},
+			</if>
+			<if test="deviceCode != null">
+				device_code = #{deviceCode,jdbcType=INTEGER},
+			</if>
+			<if test="userPhone != null">
+				user_phone = #{userPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="userAddr != null">
+				user_addr = #{userAddr,jdbcType=VARCHAR},
+			</if>
+			<if test="realName != null">
+				real_name = #{realName,jdbcType=VARCHAR},
+			</if>
+			<if test="postcode != null">
+				postcode = #{postcode,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<update id="update">
+		UPDATE
+		<include refid="table" />
+		<include refid="setAwardPlay" />
+		WHERE id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<select id="getAwardList" resultType="com.hiveview.entity.vo.api.AwardPlayVo"
+		parameterType="Map">
+		SELECT
+		tap.activity_id AS activityId,
+		tap.detail_id AS detailId,
+		tap.award_name AS awardName,
+		tap.play_time AS playTime,
+		taa.title AS title,
+		tad.award_property AS awardProperty,
+		tad.available_begin_time AS availableBeginTime,
+		tad.available_end_time AS availableEndTime,
+		tad.award_pic_url AS awardPicUrl,
+		tap.award_code AS awardCode,
+		tao.order_status AS orderStatus,
+		tad.award_video_id AS videoId,
+		tad.award_discount AS awardDiscount,
+		tad.award_video_name AS awardVideoName,
+		tad.award_price AS awardPrice,
+		tad.award_video_type AS discountType,
+		taa.award_remark AS awardRemark 
+		FROM t_award_play tap
+		LEFT JOIN t_award_activity taa ON tap.activity_id=taa.id
+		LEFT JOIN t_award_detail tad ON tap.detail_id = tad.id
+		LEFT JOIN t_award_order tao ON tap.detail_id = tao.award_detail_id AND tap.award_code = tao.award_code
+		where
+		tap.user_id=#{userId,jdbcType=VARCHAR}
+		and 
+		tap.accept_flag=1
+		<if test="awardPropertyList != null">
+			and 
+			tad.award_property in 
+			<foreach collection="awardPropertyList" index="index" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="count" resultType="Integer">
+		SELECT COUNT(*) FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="winCount" resultType="Integer">
+		SELECT COUNT(*) FROM
+		<include refid="table" />
+		WHERE 
+		<if test="id != null ">
+			and id = #{id,jdbcType=INTEGER}
+		</if>
+		<if test="userId != null ">
+			and user_id = #{userId,jdbcType=VARCHAR}
+		</if>
+		<if test="activityId != null ">
+			and activity_id = #{activityId,jdbcType=INTEGER}
+		</if>
+		<if test="detailId != null ">
+			and detail_id = #{detailId,jdbcType=INTEGER}
+		</if>
+		<if test="playTime != null ">
+			and play_time = #{playTime,jdbcType=DATE}
+		</if>
+		<if test="acceptFlag != null">
+			and accept_flag = #{acceptFlag,jdbcType=INTEGER},
+		</if>
+	</select>
+	
+	<select id="winLimitDayCount" resultType="Integer">
+		SELECT COUNT(*) FROM <include refid="table" />
+		where
+		date_format(play_time, '%Y%m%d') =  date_format(#{playTime,jdbcType=DATE}, '%Y%m%d')
+		AND detail_id = #{detailId,jdbcType=INTEGER}
+	</select>
+
+	<update id="updateAcceptFlag">
+		update
+		<include refid="table" />
+		set accept_flag = #{acceptFlag,jdbcType=INTEGER}
+		where user_id =
+		#{userId,jdbcType=VARCHAR}
+		and award_code =
+		#{awardCode,jdbcType=VARCHAR}
+	</update>
+
+	<select id="getAwardDetailForPay" resultType="com.hiveview.entity.vo.api.AwardDetailPayVo">
+		SELECT
+		ap.accept_flag AS acceptFlag,
+		ad.award_property AS awardProperty,
+		ad.award_ml_amount AS awardMlAmount,
+		ad.award_vip_duration AS
+		awardVipDuration,
+		ad.award_discount AS awardDiscount,
+		ad.award_price AS
+		awardPrice,
+		ad.award_video_id AS awardVideoId,
+		ad.available_begin_time
+		AS availableBeginTime,
+		ad.available_end_time AS availableEndTime
+		FROM
+		t_award_play ap
+		LEFT JOIN t_award_detail ad ON ap.detail_id = ad.id
+		WHERE
+		ap.user_id =#{userId,jdbcType=VARCHAR}
+		AND ap.award_code
+		=#{awardCode,jdbcType=VARCHAR}
+		AND ap.detail_id
+		=#{detailId,jdbcType=INTEGER}
+	</select>
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.award.AwardDetailDao">
+	<sql id="table">
+		t_award_detail
+	</sql>
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.po.award.AwardDetail">
+		<id column="id" property="id" />
+		<id column="activity_id" property="activityId" />
+		<id column="award_type" property="awardType" />
+		<id column="award_name" property="awardName" />
+		<id column="award_amount" property="awardAmount" />
+		<id column="award_property" property="awardProperty" />
+		<id column="award_qrcode_flag" property="awardQrcodeFlag" />
+		<id column="user_info_type" property="userInfoType" />
+		<id column="available_begin_time" property="availableBeginTime" />
+		<id column="available_end_time" property="availableEndTime" />
+		<id column="award_pic_url" property="awardPicUrl" />
+		<id column="award_icon_url" property="awardIconUrl" />
+		<id column="award_current_amount" property="awardCurrentAmount" />
+		<id column="award_discount" property="awardDiscount" />
+		<id column="award_price" property="awardPrice" />
+		<id column="award_video_id" property="awardVideoId" />
+		<id column="award_video_name" property="awardVideoName" />
+		<id column="award_code_type" property="awardCodeType" />
+		<id column="award_ml_amount" property="awardMlAmount" />
+		<id column="award_video_partner_id" property="awardVideoPartnerId" />
+		<id column="award_vip_duration" property="awardVipDuration" />
+		<id column="award_video_type" property="awardVideoType" />
+		<id column="win_limit_day" property="winLimitDay" />
+	</resultMap>
+
+	<sql id="queryBywhere">
+		<where>
+			<if test="id != null ">
+				and id = #{id,jdbcType=INTEGER}
+			</if>
+			<if test="activityId != null ">
+				and activity_id = #{activityId,jdbcType=INTEGER}
+			</if>
+		</where>
+	</sql>
+
+	<select id="getList" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+	
+	<select id="get" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="getListByActivityId" resultMap="BaseResultMap">
+		SELECT * FROM
+		<include refid="table" />
+		<include refid="queryBywhere" />
+	</select>
+
+	<select id="getAwardDetail" resultType="com.hiveview.entity.vo.api.AwardDetailVo"
+		parameterType="Map">
+		SELECT
+		tad.award_property AS awardProperty,
+		tad.award_video_type AS discountType,
+		tap.user_id AS userId,
+		tap.detail_id AS detailId,
+		tap.award_code AS awardCode,
+		taa.award_remark AS awardRemark,
+		tap.award_type AS awardType,
+		tap.award_name AS awardName,
+		tad.award_desc AS awardDesc,
+		tap.play_time AS playTime,
+		tad.available_begin_time AS availableBeginTime,
+		tad.available_end_time AS availableEndTime,
+		tad.award_pic_url AS awardPicUrl,
+		tao.order_status AS orderStatus,
+		tap.real_name AS realName,
+		tap.user_phone AS userPhone,
+		tap.user_addr AS userAddr,
+		tad.award_discount AS awardDiscount,
+		tad.award_video_name AS awardVideoName,
+		tad.award_price AS awardPrice 
+		FROM
+		t_award_play tap
+		LEFT JOIN t_award_detail tad ON tap.detail_id = tad.id
+		LEFT JOIN t_award_activity taa on tap.activity_id = taa.id
+		LEFT JOIN t_award_order tao ON tap.detail_id = tao.award_detail_id AND tap.award_code = tao.award_code 
+		where 
+		    tap.user_id =#{userId,jdbcType=VARCHAR}
+		and tap.detail_id=#{detailId,jdbcType=INTEGER}
+		and tap.award_code=#{awardCode,jdbcType=VARCHAR}
+	</select>
+
+	<update id="updateCurrentAmount">
+		update t_award_detail
+		set award_current_amount = #{awardCurrentAmount,jdbcType=INTEGER}
+		where id=#{id,jdbcType=INTEGER}
+	</update>
+</mapper>

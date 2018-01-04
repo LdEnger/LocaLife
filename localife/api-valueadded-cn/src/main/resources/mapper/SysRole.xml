@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.hiveview.dao.sys.SysRoleDao">
+ 	
+ 	<sql id="table">
+		sys_role
+	</sql>
+	
+	<select id="getSysRoleList" parameterType="com.hiveview.entity.sys.SysRole" resultType="com.hiveview.entity.sys.SysRole">
+		SELECT  sys_role_id roleId,role_name roleName,updated_time updatedTime,
+				created_by createdBy,created_time createdTime,updated_by updatedBy,
+				is_effective isEffective,is_batch isBatch 
+		FROM <include refid="table"/> WHERE
+		sys_role_id <![CDATA[>= ]]> #{roleId}
+		<if test="skipNo != -1">
+			LIMIT #{skipNo,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+		</if>
+ 	</select>
+ 	
+ 	<select id="getNotEffectiveRoleId" resultType="INTEGER">
+ 		SELECT sys_role_id FROM <include refid="table"/>
+ 		WHERE  is_effective = 0 ORDER BY sys_role_id  LIMIT 1
+ 	</select>
+ 	
+ 	<update id="updateSysRole" parameterType="SysRole">
+ 		UPDATE <include refid="table"/>
+ 		<set>
+ 		<if test="roleName!=null">
+ 			role_name = #{roleName,jdbcType=VARCHAR},
+ 		</if>
+ 		<if test="updatedTime!=null">
+ 			updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+ 		</if>
+ 		<if test="isEffective!=null">
+ 			is_effective = #{isEffective,jdbcType=INTEGER},
+ 		</if>
+ 		<if test="isBatch!=null">
+ 			is_batch = #{isBatch,jdbcType=INTEGER}
+ 		</if>
+ 		</set>
+ 		WHERE sys_role_id = #{roleId,jdbcType=INTEGER}
+ 	</update>
+
+	<insert id="addSysRole" parameterType="SysRole" useGeneratedKeys="true" keyProperty="roleId">
+		INSERT INTO <include refid="table"/>
+		(role_name,updated_time,created_time,created_by,updated_by,is_effective,is_batch)
+		VALUES
+		(#{roleName,jdbcType=VARCHAR},#{updatedTime,jdbcType=TIMESTAMP},#{createdTime,jdbcType=TIMESTAMP},#{createdBy,jdbcType=BIGINT},#{updatedBy,jdbcType=BIGINT},#{isEffective,jdbcType=INTEGER},#{isdBatch,jdbcType=INTEGER})
+	</insert>
+ 	
+	<select id="getCount" parameterType="SysRole"  resultType="INTEGER">
+			SELECT COUNT(*) FROM <include refid="table"/> WHERE 1=1
+			<if test="roleName!=null">
+			 AND role_name LIKE '%#{roleName,jdbcType=VARCHAR}%'
+			</if>
+ 	</select>
+
+	<delete id="deleteRole" parameterType="INTEGER">
+		DELETE FROM <include refid="table"/> WHERE sys_role_id=#{roleId,jdbcType=INTEGER}
+	</delete>
+	<select id="getRoleById" parameterType="Integer"  resultType="String">
+	SELECT role_name FROM <include refid="table"/>
+	WHERE sys_role_id = #{sysRoleId}
+	</select>
+	
+	<select id="getRoleBatch" parameterType="Integer"  resultType="Integer">
+	SELECT is_batch FROM <include refid="table"/>
+	WHERE sys_role_id = #{sysRoleId} 
+	</select>
+
+</mapper>

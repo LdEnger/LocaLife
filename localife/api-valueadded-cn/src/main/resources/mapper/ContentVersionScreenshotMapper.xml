@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hiveview.dao.localLife.ContentVersionScreenshotDao">
+
+	<resultMap id="BaseResultMap" type="com.hiveview.entity.vo.localLife.ContentVersionScreenshotVo">
+		<id column="screenshotUrl" property="screenshotUrl" />
+	</resultMap>
+    <sql id="Base_Column_List">
+		 cvs.screenshotUrl
+	</sql>
+	<sql id="queryBywhere">
+		<where>
+			<!--<if test="countryId != null ">
+				and con.countryId = #{countryId,jdbcType=INTEGER}
+			</if>-->
+			<if test="provinceId != null and provinceId !=''">
+				and con.provinceId = #{provinceId}
+			</if>
+			<if test="cityId != null and cityId != ''">
+				and con.cityId = #{cityId}
+			</if>
+            <if test="id != null ">
+                and con.id = #{id,jdbcType=INTEGER}
+            </if>
+		</where>
+	</sql>
+
+	<select id="getContent" parameterType="Content"  resultMap="BaseResultMap">
+		SELECT con.id as contentId,con.name as contentName,con.typeId,con.developerName,con.category,con.describe,con.picUrl,con.panoramaUrl,con.videoUrl
+        FROM ll_content con
+        <include refid="queryBywhere" />
+	</select>
+
+</mapper>
